@@ -1,8 +1,6 @@
 ## What is this miniMAC
 
-_*This custom circuit and protocol is not at all compliant or even compatible, even remotely linked to any 802.3 standard.*_
-
-[It's all explained and detailed on Hackaday](https://hackaday.io/project/198914)
+IMPORTANT: This custom circuit and protocol is not at all compliant or even compatible, even remotely linked to any 802.3 standard. It's all explained and detailed on Hackaday at https://hackaday.io/project/198914
 
 This unit works on 16-bit data, which are scrambled with a 17th bit for data/control framing (C/D). The 18-bit result is suitable for sending to a (custom) PHY for serialisation and line coding. This unit combines two sophisticated circuits:
 
@@ -29,3 +27,5 @@ Input a data word on the input, clock and enable, and get encoded or decoded dat
 ## External hardware
 
 Custom boards will be put together. I will try to get a pair of boards to connect together, such that I can verify a whole transmition chain
+
+(to be continued)
