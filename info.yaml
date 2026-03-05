@@ -45,7 +45,7 @@ pinout:
   # Bidirectional pins
   uio[0]: "D08"
   uio[1]: "QEN"
-  uio[2]: ""
+  uio[2]: "CLK_out"
   uio[3]: "DEN"
   uio[4]: "Enc"
   uio[5]: "Dec"
