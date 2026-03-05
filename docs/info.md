@@ -12,13 +12,21 @@ This unit works on 16-bit data, which are scrambled with a 17th bit for data/con
 
 ![](Hammer18_w.png)
 
-Together they provide very strong scrambling, eliminate problems inherent with classical LFSRs, and detect errors very early. With an equivalent of 56 bits of state, the system is tailored for early retransmition. A external circuit is required to implement the higher-level protocol, buffering and retransmition logic.
+Together they provide very strong scrambling, eliminate problems inherent with classical LFSRs, and detect errors very early. With an equivalent of 56 bits of state, the system is tailored for early retransmission to save bandwidth and reduce buffer sizes (hence cost and latency).
+
+An external circuit is required to implement the higher-level protocol, buffering and retransmission logic.
 
 ## How it works
 
-The Hammer stage works in one cycle while gPEAC requires two cycles. The overall latency is 3 cycles, a sequence that is internally started when data is initially input with Den=1. Due to pin constraints, the data are transmitted in two cycles. For decoding, the next stage is Hammer scrambling then 2 stages of gPEAC descrambling, followed by 2 cycles of writing the results over 2 cycles.
+The Hammer stage works in one cycle while gPEAC requires two cycles. The overall latency is 3 cycles, a sequence that is internally started when data is initially input with Den=1. Due to pin constraints, the data are transmitted in two cycles.
 
-Two of the three stages are overlapped and pipelined to provide a throughput of 1 every other clock pulse. The 2 cycles of operand feeding match the 2 cycles of gPEAC.
+- For encoding, the input data goest through gPEAC then Hammer.
+
+- For decoding, the scrambled data goes through Hammer then 2 cycles of gPEAC descrambling
+
+Data output takes 2 cycles as well.
+
+Two of the three stages can overlap, so it's all pipelined to provide a throughput of 1 every other clock pulse. The 2 cycles of operand feeding match the 2 cycles of gPEAC. Setting Den=1 during 2 consecutive cycles is an error.
 
 ## How to test
 
