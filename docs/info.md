@@ -57,6 +57,6 @@ Notes :
 
 ## External hardware
 
-Custom boards will be made. I will try to get a pair of boards to connect together, such that I can verify a whole transmition chain.
+Custom boards or adapters will be made. I will try to get a pair of chips to connect together, such that I can verify a whole transmission chain.
 
 (to be continued)
