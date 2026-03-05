@@ -16,12 +16,27 @@ module tt_um_miniMAC (
     input  wire       rst_n     // reset_n - low to reset
 );
 
+  // IO config & misc.
+  assign uio_oe  = 8'b00000011; // port uio : only 2 LSB go out
+
+  // aliasing
+  wire Den, Qen, Encode, Decode, ExtReset;
+  assign uio_out[1] = Qen;
+  assign Den        = uio_in[3];
+  assign Encode     = uio_in[4];
+  assign Decode     = uio_in[5];
+  assign ExtReset   = uio_in[6];
+
+  wire [8:0] Din9, Dout9;
+  assign uo_out     = Dout9[7:0];
+  assign uio_out[0] = Dout9[8];
+  assign Din9[8]    = uio_in[7];
+  assign Din9[7:0]  = ui_in;
+  
   // All output pins must be assigned. If not used, assign to 0.
-  assign uo_out  = ui_in + uio_in;  // Example: ou_out is the sum of ui_in and uio_in
-  assign uio_out = 0;
-  assign uio_oe  = 0;
+  assign uio_out[7:2] = 6'b000000;
 
   // List all unused inputs to prevent warnings
-  wire _unused = &{ena, clk, rst_n, 1'b0};
+  wire _unused = &{ena, 1'b0};
 
 endmodule
