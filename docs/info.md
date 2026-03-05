@@ -2,7 +2,7 @@
 
 IMPORTANT: This custom circuit and protocol is not at all compliant or even compatible, even remotely linked to any 802.3 standard. It's all explained and detailed on Hackaday at https://hackaday.io/project/198914
 
-This unit works on 16-bit data, which are scrambled with a 17th bit for data/control framing (C/D). The 18-bit result is suitable for sending to a (custom) PHY (see https://hackaday.io/project/203186 ) for serialisation and line coding. This unit combines two sophisticated circuits:
+The miniMAC is a (currently partial) Media Access Controller for a simplified data link over twisted pairs. It provides error detection and scrambling of 16-bit data words, which are combined with a 17th bit for data/control framing (C/D). The 18-bit result is suitable for sending to a (custom) PHY (see https://hackaday.io/project/203186 ) for serialisation and line coding. This unit chains two sophisticated circuits:
 
 - The term "gPEAC" means "generalised Pisano with End-Around Carry" (see https://hackaday.io/project/178998 ), a class of PRNG/scrambler/checksum that uses different mathematics than Galois-based LFSR. The gPEAC18 unit is a non-power-of-two additive-based scrambler-checksum, with modulus=258114. It combines the 17 bits and creates an extra check bit. They both work as super-parity bits.
 
@@ -36,7 +36,7 @@ First let's examine the pinout. The inputs:
 - Enc and Dec select the pipeline routing mode:
   - Enc=0, Dec=0 : bypass mode => the output is copied to the output after 3 cycles,
   - Enc=0, Dec=1 : decode mode => the cleartext input is scrambled and output after 5 cycles,
-  - Enc=1, Dec=0 : encode mode => the scrambled input is restorcleartext is input and ed to cleartext after 5 cycles,
+  - Enc=1, Dec=0 : encode mode => the scrambled input is restored to cleartext after 5 cycles,
   - Enc=0, Dec=1 : loopback mode => encodes then decodes, the delayed output (8 cycles) must be identical to the input.
 - DI0 to DI8 are 9-bit data half-words that are sampled at the rising edge of CLK.
 - DEN is Data ENable input, signalling the presence of the first 9-bit half-word of the pair on DI0:8. The second half MUST follow immediately, during the next cycle of CLK.
