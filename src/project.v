@@ -15,16 +15,6 @@ module tt_um_miniMAC (
     input  wire       clk,      // clock
     input  wire       rst_n     // reset_n - low to reset
 );
-/*
-  uio[0]: "D08"
-  uio[1]: "QEN"
-  uio[2]: "CLK_out"
-  uio[3]: "Z"
-  uio[4]: "Enc"
-  uio[5]: "Dec"
-  uio[6]: "DEN"
-  uio[7]: "DI8"
-*/
 
   // IO config & misc.
   assign uio_oe  = 8'b00001111; // port uio : 4 LSB go out
@@ -53,11 +43,11 @@ module tt_um_miniMAC (
 /////////////////////////////////////////////////////////////////////////////
 
   // ring oscillator anyone ?
-  (* keep *) sg13g2_inv_1 negClkOut(.Y(CLK_OUT), .A(clk));
+    (* keep *) sg13g2_inv_1 negClkOut(.Y(CLK_out), .A(clk));
 
   // resynch the reset signal
   wire INT_RESET;
-  (* keep *) sg13g2_dfrbpq_2 DFF_reset(.Q(INT_RESET), .D(1'b1), .RESET_B(rst_n), .CLK(CLK_OUT));
+    (* keep *) sg13g2_dfrbpq_2 DFF_reset(.Q(INT_RESET), .D(1'b1), .RESET_B(rst_n), .CLK(clk));
 
 
   // Dumb loopback
