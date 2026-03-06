@@ -52,10 +52,18 @@ module tt_um_miniMAC (
 
 /////////////////////////////////////////////////////////////////////////////
 
+  // ring oscillator anyone ?
+  (* keep *) sg13g2_inv_1 negClkOut(.Y(CLK_OUT), .A(clk));
+
+  // resynch the reset signal
+  wire INT_RESET;
+  (* keep *) sg13g2_dfrbpq_2 DFF_reset(.Q(INT_RESET), .D(1'b1), .RESET_B(rst_n), .CLK(CLK_OUT));
+
+
   // Dumb loopback
   assign Dout9 = Din9;
   assign QEN = DEN;
-  assign CLK_out = Encode;
-  assign Zero = Decode;
+//  assign CLK_out = Encode;
+  assign Zero = Decode ^ Encode ^ INT_RESET;
   
 endmodule
