@@ -46,7 +46,7 @@ pinout:
   uio[0]: "D08"
   uio[1]: "QEN"
   uio[2]: "CLK_out"
-  uio[3]: "Z"
+  uio[3]: "Zero"
   uio[4]: "Enc"
   uio[5]: "Dec"
   uio[6]: "DEN"
