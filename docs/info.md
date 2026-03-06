@@ -24,7 +24,7 @@ The Hammer stage works in one cycle while gPEAC requires two cycles. The overall
 
 - For decoding, the scrambled data goes through Hammer then 2 cycles of gPEAC descrambling
 
-Data output takes two more cycles.
+Data output takes two more cycles. But even at the default 50MHz clock speed, that's 25M×18 bits or 450Mbps.
 
 Two of the three stages can overlap, so it's all pipelined to provide a throughput of 1 every other clock pulse. The 2 cycles of operand feeding match the 2 cycles of gPEAC. Setting Den=1 during 2 consecutive cycles is an error.
 
