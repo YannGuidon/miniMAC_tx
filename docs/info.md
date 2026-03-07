@@ -8,9 +8,9 @@ The miniMAC is a (currently partial) Media Access Controller for a simplified da
 
 ![](gPEAC18_codec_v4.png)
 
-- "Hammer" is a contraction of the "Hamming distance maximiser". The Hammer18 unit is a XOR-based (bijective) scrambler that boosts the Hamming distance on the scrambled 18-bit word. This version contains 3 layers of taylored permutations between 64 XOR2 gates, its avalanche profile for single-bit toggle is 7 8 8 8 8 9 9 9 9 10 11 13 13 14 14 14 15 16 and even though the diagram is not perfectly accurate, the circuit looks like this: 
+- "Hammer" is a contraction of the "Hamming distance maximiser". The Hammer18 unit is a XOR-based (bijective) scrambler that boosts the Hamming distance on the scrambled 18-bit word. This version contains 3 layers of taylored permutations between 64 XOR2 gates, with very strong avalanche: 
 
-![](Hammer18_w.png)
+![](Hammer18_circuit.png)
 
 Conveniently, the same sea-of-XOR is identical, both for encoding and decoding, and the decoding side is "recursive" such that it amplifies any transmission error at the receiving end. The cost in latency, in both cases, is just a XOR in the critical datapath:
 
