@@ -5,36 +5,102 @@
   Just because I don't want to learn Verilog.
 */
 
+module fanout4(
+  input  wire A,
+  output [3:0] X
+);
+  wire N;
+  (* keep *) sg13g2_inv_4 fo0(.Y(N),    .A(A));
+  (* keep *) sg13g2_inv_4 fo0(.Y(X[0]), .A(N));
+  (* keep *) sg13g2_inv_4 fo1(.Y(X[1]), .A(N));
+  (* keep *) sg13g2_inv_4 fo2(.Y(X[2]), .A(N));
+  (* keep *) sg13g2_inv_4 fo3(.Y(X[3]), .A(N));
+endmodule
+
 module mux2_x18(
-  input wire sel,
-  input wire [17:0] if0,
-  input wire [17:0] if1,
+  input  wire sel,
+  input  wire [17:0] if0,
+  input  wire [17:0] if1,
   output wire [17:0] res
 );
-  wire sel0, sel1, sel2, sel3, sel4;
-  (* keep *) sg13g2_inv_4 boost0(.Y(sel0),  .A(sel));
-  (* keep *) sg13g2_inv_4 boost1(.Y(sel1),  .A(sel0));
-  (* keep *) sg13g2_inv_4 boost2(.Y(sel2),  .A(sel0));
-  (* keep *) sg13g2_inv_4 boost3(.Y(sel3),  .A(sel0));
-  (* keep *) sg13g2_inv_4 boost4(.Y(sel4),  .A(sel0));
+  wire [4:1] s;
+  fanout4 fo4(.A(sel), .X(s));
 
-  (* keep *) sg13g2_mux2_2 mux_00(.A0(if0[ 0]), .A1(if1[ 0]), .S(sel1), .X(res[ 0]));
-  (* keep *) sg13g2_mux2_2 mux_01(.A0(if0[ 1]), .A1(if1[ 1]), .S(sel1), .X(res[ 1]));
-  (* keep *) sg13g2_mux2_2 mux_02(.A0(if0[ 2]), .A1(if1[ 2]), .S(sel1), .X(res[ 2]));
-  (* keep *) sg13g2_mux2_2 mux_03(.A0(if0[ 3]), .A1(if1[ 3]), .S(sel1), .X(res[ 3]));
-  (* keep *) sg13g2_mux2_2 mux_04(.A0(if0[ 4]), .A1(if1[ 4]), .S(sel2), .X(res[ 4]));
-  (* keep *) sg13g2_mux2_2 mux_05(.A0(if0[ 5]), .A1(if1[ 5]), .S(sel2), .X(res[ 5]));
-  (* keep *) sg13g2_mux2_2 mux_06(.A0(if0[ 6]), .A1(if1[ 6]), .S(sel2), .X(res[ 6]));
-  (* keep *) sg13g2_mux2_2 mux_07(.A0(if0[ 7]), .A1(if1[ 7]), .S(sel2), .X(res[ 7]));
-  (* keep *) sg13g2_mux2_2 mux_08(.A0(if0[ 8]), .A1(if1[ 8]), .S(sel2), .X(res[ 8]));
-  (* keep *) sg13g2_mux2_2 mux_09(.A0(if0[ 9]), .A1(if1[ 9]), .S(sel3), .X(res[ 9]));
-  (* keep *) sg13g2_mux2_2 mux_10(.A0(if0[10]), .A1(if1[10]), .S(sel3), .X(res[10]));
-  (* keep *) sg13g2_mux2_2 mux_11(.A0(if0[11]), .A1(if1[11]), .S(sel3), .X(res[11]));
-  (* keep *) sg13g2_mux2_2 mux_12(.A0(if0[12]), .A1(if1[12]), .S(sel3), .X(res[12]));
-  (* keep *) sg13g2_mux2_2 mux_13(.A0(if0[13]), .A1(if1[13]), .S(sel4), .X(res[13]));
-  (* keep *) sg13g2_mux2_2 mux_14(.A0(if0[14]), .A1(if1[14]), .S(sel4), .X(res[14]));
-  (* keep *) sg13g2_mux2_2 mux_15(.A0(if0[15]), .A1(if1[15]), .S(sel4), .X(res[15]));
-  (* keep *) sg13g2_mux2_2 mux_16(.A0(if0[16]), .A1(if1[16]), .S(sel4), .X(res[16]));
-  (* keep *) sg13g2_mux2_2 mux_17(.A0(if0[17]), .A1(if1[17]), .S(sel4), .X(res[17]));
+  (* keep *) sg13g2_mux2_2 mux_00(.A0(if0[ 0]), .A1(if1[ 0]), .S(s[1]), .X(res[ 0]));
+  (* keep *) sg13g2_mux2_2 mux_01(.A0(if0[ 1]), .A1(if1[ 1]), .S(s[1]), .X(res[ 1]));
+  (* keep *) sg13g2_mux2_2 mux_02(.A0(if0[ 2]), .A1(if1[ 2]), .S(s[1]), .X(res[ 2]));
+  (* keep *) sg13g2_mux2_2 mux_03(.A0(if0[ 3]), .A1(if1[ 3]), .S(s[1]), .X(res[ 3]));
+  (* keep *) sg13g2_mux2_2 mux_04(.A0(if0[ 4]), .A1(if1[ 4]), .S(s[2]), .X(res[ 4]));
+  (* keep *) sg13g2_mux2_2 mux_05(.A0(if0[ 5]), .A1(if1[ 5]), .S(s[2]), .X(res[ 5]));
+  (* keep *) sg13g2_mux2_2 mux_06(.A0(if0[ 6]), .A1(if1[ 6]), .S(s[2]), .X(res[ 6]));
+  (* keep *) sg13g2_mux2_2 mux_07(.A0(if0[ 7]), .A1(if1[ 7]), .S(s[2]), .X(res[ 7]));
+  (* keep *) sg13g2_mux2_2 mux_08(.A0(if0[ 8]), .A1(if1[ 8]), .S(s[2]), .X(res[ 8]));
+  (* keep *) sg13g2_mux2_2 mux_09(.A0(if0[ 9]), .A1(if1[ 9]), .S(s[3]), .X(res[ 9]));
+  (* keep *) sg13g2_mux2_2 mux_10(.A0(if0[10]), .A1(if1[10]), .S(s[3]), .X(res[10]));
+  (* keep *) sg13g2_mux2_2 mux_11(.A0(if0[11]), .A1(if1[11]), .S(s[3]), .X(res[11]));
+  (* keep *) sg13g2_mux2_2 mux_12(.A0(if0[12]), .A1(if1[12]), .S(s[3]), .X(res[12]));
+  (* keep *) sg13g2_mux2_2 mux_13(.A0(if0[13]), .A1(if1[13]), .S(s[4]), .X(res[13]));
+  (* keep *) sg13g2_mux2_2 mux_14(.A0(if0[14]), .A1(if1[14]), .S(s[4]), .X(res[14]));
+  (* keep *) sg13g2_mux2_2 mux_15(.A0(if0[15]), .A1(if1[15]), .S(s[4]), .X(res[15]));
+  (* keep *) sg13g2_mux2_2 mux_16(.A0(if0[16]), .A1(if1[16]), .S(s[4]), .X(res[16]));
+  (* keep *) sg13g2_mux2_2 mux_17(.A0(if0[17]), .A1(if1[17]), .S(s[4]), .X(res[17]));
+endmodule
+
+module xor2_x18(
+  input  wire [17:0] A,
+  input  wire [17:0] B,
+  output wire [17:0] X
+);
+  (* keep *) sg13g2_xor2_1 x00(.X(X[ 0]), .A(A[ 0]), .B(B[ 0]));
+  (* keep *) sg13g2_xor2_1 x01(.X(X[ 1]), .A(A[ 1]), .B(B[ 1]));
+  (* keep *) sg13g2_xor2_1 x02(.X(X[ 2]), .A(A[ 2]), .B(B[ 2]));
+  (* keep *) sg13g2_xor2_1 x03(.X(X[ 3]), .A(A[ 3]), .B(B[ 3]));
+  (* keep *) sg13g2_xor2_1 x04(.X(X[ 4]), .A(A[ 4]), .B(B[ 4]));
+  (* keep *) sg13g2_xor2_1 x05(.X(X[ 5]), .A(A[ 5]), .B(B[ 5]));
+  (* keep *) sg13g2_xor2_1 x06(.X(X[ 6]), .A(A[ 6]), .B(B[ 6]));
+  (* keep *) sg13g2_xor2_1 x07(.X(X[ 7]), .A(A[ 7]), .B(B[ 7]));
+  (* keep *) sg13g2_xor2_1 x08(.X(X[ 8]), .A(A[ 8]), .B(B[ 8]));
+  (* keep *) sg13g2_xor2_1 x09(.X(X[ 9]), .A(A[ 9]), .B(B[ 9]));
+  (* keep *) sg13g2_xor2_1 x10(.X(X[10]), .A(A[10]), .B(B[10]));
+  (* keep *) sg13g2_xor2_1 x11(.X(X[11]), .A(A[11]), .B(B[11]));
+  (* keep *) sg13g2_xor2_1 x12(.X(X[12]), .A(A[12]), .B(B[12]));
+  (* keep *) sg13g2_xor2_1 x13(.X(X[13]), .A(A[13]), .B(B[13]));
+  (* keep *) sg13g2_xor2_1 x14(.X(X[14]), .A(A[14]), .B(B[14]));
+  (* keep *) sg13g2_xor2_1 x15(.X(X[15]), .A(A[15]), .B(B[15]));
+  (* keep *) sg13g2_xor2_1 x16(.X(X[16]), .A(A[16]), .B(B[16]));
+  (* keep *) sg13g2_xor2_1 x17(.X(X[17]), .A(A[17]), .B(B[17]));
+endmodule
+
+module dffen_x18(
+  input  wire clk,
+  input  wire rst,
+  input  wire en,
+  input  wire [17:0] D,
+  output wire [17:0] Q
+);
+  wire [17:0] fb;
+  assign Q = fb;
+
+  wire [4:1] r; fanout4 fo4(.A(rst), .X(r));
+  wire [4:1] e; fanout4 fo4(.A(en),  .X(e));
   
+  (* keep *) sg13g2_sdfrbpq_1 dffe00(.Q(fb[ 0]), .D(fb[ 0]), .SCD(D[ 0]), .SCE(e[1]), .RESET_B(r[1]), .CLK(clk));
+  (* keep *) sg13g2_sdfrbpq_1 dffe01(.Q(fb[ 1]), .D(fb[ 1]), .SCD(D[ 1]), .SCE(e[1]), .RESET_B(r[1]), .CLK(clk));
+  (* keep *) sg13g2_sdfrbpq_1 dffe02(.Q(fb[ 2]), .D(fb[ 2]), .SCD(D[ 2]), .SCE(e[1]), .RESET_B(r[1]), .CLK(clk));
+  (* keep *) sg13g2_sdfrbpq_1 dffe03(.Q(fb[ 3]), .D(fb[ 3]), .SCD(D[ 3]), .SCE(e[1]), .RESET_B(r[1]), .CLK(clk));
+  (* keep *) sg13g2_sdfrbpq_1 dffe04(.Q(fb[ 4]), .D(fb[ 4]), .SCD(D[ 4]), .SCE(e[2]), .RESET_B(r[2]), .CLK(clk));
+  (* keep *) sg13g2_sdfrbpq_1 dffe05(.Q(fb[ 5]), .D(fb[ 5]), .SCD(D[ 5]), .SCE(e[2]), .RESET_B(r[2]), .CLK(clk));
+  (* keep *) sg13g2_sdfrbpq_1 dffe06(.Q(fb[ 6]), .D(fb[ 6]), .SCD(D[ 6]), .SCE(e[2]), .RESET_B(r[2]), .CLK(clk));
+  (* keep *) sg13g2_sdfrbpq_1 dffe07(.Q(fb[ 7]), .D(fb[ 7]), .SCD(D[ 7]), .SCE(e[2]), .RESET_B(r[2]), .CLK(clk));
+  (* keep *) sg13g2_sdfrbpq_1 dffe08(.Q(fb[ 8]), .D(fb[ 8]), .SCD(D[ 8]), .SCE(e[2]), .RESET_B(r[2]), .CLK(clk));
+  (* keep *) sg13g2_sdfrbpq_1 dffe09(.Q(fb[ 9]), .D(fb[ 9]), .SCD(D[ 9]), .SCE(e[3]), .RESET_B(r[3]), .CLK(clk));
+  (* keep *) sg13g2_sdfrbpq_1 dffe10(.Q(fb[10]), .D(fb[10]), .SCD(D[10]), .SCE(e[3]), .RESET_B(r[3]), .CLK(clk));
+  (* keep *) sg13g2_sdfrbpq_1 dffe11(.Q(fb[11]), .D(fb[11]), .SCD(D[11]), .SCE(e[3]), .RESET_B(r[3]), .CLK(clk));
+  (* keep *) sg13g2_sdfrbpq_1 dffe12(.Q(fb[12]), .D(fb[12]), .SCD(D[12]), .SCE(e[3]), .RESET_B(r[3]), .CLK(clk));
+  (* keep *) sg13g2_sdfrbpq_1 dffe13(.Q(fb[13]), .D(fb[13]), .SCD(D[13]), .SCE(e[3]), .RESET_B(r[3]), .CLK(clk));
+  (* keep *) sg13g2_sdfrbpq_1 dffe14(.Q(fb[14]), .D(fb[14]), .SCD(D[14]), .SCE(e[4]), .RESET_B(r[4]), .CLK(clk));
+  (* keep *) sg13g2_sdfrbpq_1 dffe15(.Q(fb[15]), .D(fb[15]), .SCD(D[15]), .SCE(e[4]), .RESET_B(r[4]), .CLK(clk));
+  (* keep *) sg13g2_sdfrbpq_1 dffe16(.Q(fb[16]), .D(fb[16]), .SCD(D[16]), .SCE(e[4]), .RESET_B(r[4]), .CLK(clk));
+  (* keep *) sg13g2_sdfrbpq_1 dffe17(.Q(fb[17]), .D(fb[17]), .SCD(D[17]), .SCE(e[4]), .RESET_B(r[4]), .CLK(clk));
+
 endmodule
