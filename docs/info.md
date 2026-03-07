@@ -12,6 +12,10 @@ The miniMAC is a (currently partial) Media Access Controller for a simplified da
 
 ![](Hammer18_w.png)
 
+Conveniently, the same sea-of-XOR is identical, both for encoding and decoding, and the decoding side is "recursive" such that it amplifies any transmission error at the receiving end.
+
+![](Hammer_codec_2w.png)
+
 These very different types of circuits are complementary, together they provide very strong scrambling, eliminate problems inherent with classical LFSRs, and detect errors very early. With an equivalent of 56 bits of state and uncrashable mathematics, the system is tailored for safety and early retransmission to save bandwidth/latency and reduce buffer sizes (and cost).
 
 An external circuit is required to implement the higher-level protocol, buffering and retransmission logic.
