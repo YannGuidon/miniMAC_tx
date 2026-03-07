@@ -10,7 +10,7 @@ module fanout4(
   output [3:0] X
 );
   wire N;
-  (* keep *) sg13g2_inv_4 fo0(.Y(N),    .A(A));
+  (* keep *) sg13g2_inv_4 foN(.Y(N),    .A(A));
   (* keep *) sg13g2_inv_4 fo0(.Y(X[0]), .A(N));
   (* keep *) sg13g2_inv_4 fo1(.Y(X[1]), .A(N));
   (* keep *) sg13g2_inv_4 fo2(.Y(X[2]), .A(N));
@@ -81,8 +81,8 @@ module dffen_x18(
   wire [17:0] fb;
   assign Q = fb;
 
-  wire [4:1] r; fanout4 fo4(.A(rst), .X(r));
-  wire [4:1] e; fanout4 fo4(.A(en),  .X(e));
+  wire [4:1] r; fanout4 fo_r(.A(rst), .X(r));
+  wire [4:1] e; fanout4 fo_e(.A(en),  .X(e));
   
   (* keep *) sg13g2_sdfrbpq_1 dffe00(.Q(fb[ 0]), .D(fb[ 0]), .SCD(D[ 0]), .SCE(e[1]), .RESET_B(r[1]), .CLK(clk));
   (* keep *) sg13g2_sdfrbpq_1 dffe01(.Q(fb[ 1]), .D(fb[ 1]), .SCD(D[ 1]), .SCE(e[1]), .RESET_B(r[1]), .CLK(clk));
