@@ -7,7 +7,7 @@
 // See https://hackaday.io/project/198914/log/246545
 // "untangled" diagram: https://is.gd/WA6oiP
 //
-// Original permutation (it got altered somewhere it's not an absolute reference)
+// Original permutation (it got altered somewhere, it's not an absolute reference)
 // Perm1965 =
 //  forward(  3  5  9 17 16 10 15 12  1  2  0 14  6  7 13  8 11  4 )
 //  reverse( 10  8  9  0 17  1 12 13 15  2  5 16  7 14 11  6  4  3 )
@@ -18,7 +18,9 @@
 //  forward(  4 17  6  5  1 15  7 14 16 13  0  9 10  8 12  2  3 11 )
 //  reverse( 10  4 15 16  0  3  2  6 13 11 12 17 14  9  7  5  8  1 )
 //
-// sorted avalanche profile: (to be recomputed)
+// sorted avalanche profile for single bitflip: 
+//    7 8 8 8 8 9 9 9 9 1 12 13 14 15 15 15 15 15
+// total: 200
 
 module Hammer18x4 (
   input  wire [17:0] I,
