@@ -71,27 +71,27 @@ module tt_um_miniMAC (
   // Den_In1 <= ~Den_In0   DFF_Q   sg13g2_dfrbp_1 / 52
   (* keep *) sg13g2_dfrbp_1 DFF_den1(.Q_N(Den_In1), .D(Den_In0), .RESET_B(INT_RESET), .CLK(clk));
   // Den_OK <= Den_In0 & ~Den_In1  sg13g2_and2_2
-  (* keep *) sg13g2_and2_1 (.X(Den_OK), .A(Den_In0), .B(Den_In1));
+    (* keep *) sg13g2_and2_1 Den_OK_and2(.X(Den_OK), .A(Den_In0), .B(Den_In1));
 
   dff_x9    fhw(.clk(clk), .rst(INT_RESET), .D(Din9), .Q(FirstHalfWord));                           // Always samples the input
   dffen_x18  fw(.clk(clk), .rst(INT_RESET), .D({Din9, FirstHalfWord}), .Q(FirstWord), .en(Den_OK)); // Samples only if DEN is ok
 
 
   // Some pretend work (for now)
-  Hammer18x4(.I(FirstWord), .O(LastWord));
+  Hammer18x4 Ham(.I(FirstWord), .O(LastWord));
 
   // Output buffers
   wire Zero_value;
   wire [17:0] LastWord;
   wire [8:0]  LastHalfWord, LastMSB;
 
-  or16(.A(LastWord), .X(Zero_value));   // OR the 16 LSB  (beware of C/D !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!)
+  or16 zo16(.A(LastWord), .X(Zero_value));   // OR the 16 LSB  (beware of C/D !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!)
   (* keep *) sg13g2_dfrbpq_1 DFF_sero(.Q(Zero), .D(Zero_value), .RESET_B(INT_RESET), .CLK(clk));  // Latch & output the sum
 
   dff_x9 dffMSB(.D(LastWord[17:9]), .Q(LastMSB), .clk(clk), .rst(INT_RESET));
-  a22oi_fo_x9(.A1(Decode), .A2(LastWord[8:0]),
-              .B1(Encode), .B2(LastMSB),
-                           .Y(LastHalfWord));
+  a22oi_fo_x9 sel2(.A1(Decode), .A2(LastWord[8:0]),
+                   .B1(Encode), .B2(LastMSB),
+                   .Y(LastHalfWord));
   dff_x9 dffOut(.D(LastHalfWord), .Q(Dout9), .clk(clk), .rst(INT_RESET));  // Latch & output the data halfword
 
   // Dumb loopback
