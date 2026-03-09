@@ -141,7 +141,7 @@ module dffn_x9(
   output wire [8:0] QN
 );
   wire [3:1] r; fanout3 fo_r(.A(rst), .X(r));
-
+  /* verilator lint_off PINCONNECTEMPTY */
   (* keep *) sg13g2_dfrbp_2 dffn0(.Q(), .Q_N(QN[0]), .D(D[0]), .RESET_B(r[1]), .CLK(clk));
   (* keep *) sg13g2_dfrbp_2 dffn1(.Q(), .Q_N(QN[1]), .D(D[1]), .RESET_B(r[1]), .CLK(clk));
   (* keep *) sg13g2_dfrbp_2 dffn2(.Q(), .Q_N(QN[2]), .D(D[2]), .RESET_B(r[1]), .CLK(clk));
@@ -151,6 +151,7 @@ module dffn_x9(
   (* keep *) sg13g2_dfrbp_2 dffn6(.Q(), .Q_N(QN[6]), .D(D[6]), .RESET_B(r[3]), .CLK(clk));
   (* keep *) sg13g2_dfrbp_2 dffn7(.Q(), .Q_N(QN[7]), .D(D[7]), .RESET_B(r[3]), .CLK(clk));
   (* keep *) sg13g2_dfrbp_2 dffn8(.Q(), .Q_N(QN[8]), .D(D[8]), .RESET_B(r[3]), .CLK(clk));
+  /* verilator lint_on PINCONNECTEMPTY */
 endmodule
 
 module a22oi_x9(
