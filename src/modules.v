@@ -142,15 +142,15 @@ module dffn_x9(
 );
   wire [3:1] r; fanout3 fo_r(.A(rst), .X(r));
 
-  (* keep *) sg13g2_dfrbp_2 dffn0(.Q(QN[0]), .D(D[0]), .RESET_B(r[1]), .CLK(clk));
-  (* keep *) sg13g2_dfrbp_2 dffn1(.Q(QN[1]), .D(D[1]), .RESET_B(r[1]), .CLK(clk));
-  (* keep *) sg13g2_dfrbp_2 dffn2(.Q(QN[2]), .D(D[2]), .RESET_B(r[1]), .CLK(clk));
-  (* keep *) sg13g2_dfrbp_2 dffn3(.Q(QN[3]), .D(D[3]), .RESET_B(r[2]), .CLK(clk));
-  (* keep *) sg13g2_dfrbp_2 dffn4(.Q(QN[4]), .D(D[4]), .RESET_B(r[2]), .CLK(clk));
-  (* keep *) sg13g2_dfrbp_2 dffn5(.Q(QN[5]), .D(D[5]), .RESET_B(r[2]), .CLK(clk));
-  (* keep *) sg13g2_dfrbp_2 dffn6(.Q(QN[6]), .D(D[6]), .RESET_B(r[3]), .CLK(clk));
-  (* keep *) sg13g2_dfrbp_2 dffn7(.Q(QN[7]), .D(D[7]), .RESET_B(r[3]), .CLK(clk));
-  (* keep *) sg13g2_dfrbp_2 dffn8(.Q(QN[8]), .D(D[8]), .RESET_B(r[3]), .CLK(clk));
+  (* keep *) sg13g2_dfrbp_2 dffn0(.Q(), .Q_N(QN[0]), .D(D[0]), .RESET_B(r[1]), .CLK(clk));
+  (* keep *) sg13g2_dfrbp_2 dffn1(.Q(), .Q_N(QN[1]), .D(D[1]), .RESET_B(r[1]), .CLK(clk));
+  (* keep *) sg13g2_dfrbp_2 dffn2(.Q(), .Q_N(QN[2]), .D(D[2]), .RESET_B(r[1]), .CLK(clk));
+  (* keep *) sg13g2_dfrbp_2 dffn3(.Q(), .Q_N(QN[3]), .D(D[3]), .RESET_B(r[2]), .CLK(clk));
+  (* keep *) sg13g2_dfrbp_2 dffn4(.Q(), .Q_N(QN[4]), .D(D[4]), .RESET_B(r[2]), .CLK(clk));
+  (* keep *) sg13g2_dfrbp_2 dffn5(.Q(), .Q_N(QN[5]), .D(D[5]), .RESET_B(r[2]), .CLK(clk));
+  (* keep *) sg13g2_dfrbp_2 dffn6(.Q(), .Q_N(QN[6]), .D(D[6]), .RESET_B(r[3]), .CLK(clk));
+  (* keep *) sg13g2_dfrbp_2 dffn7(.Q(), .Q_N(QN[7]), .D(D[7]), .RESET_B(r[3]), .CLK(clk));
+  (* keep *) sg13g2_dfrbp_2 dffn8(.Q(), .Q_N(QN[8]), .D(D[8]), .RESET_B(r[3]), .CLK(clk));
 endmodule
 
 module a22oi_x9(
