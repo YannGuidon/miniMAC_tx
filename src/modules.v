@@ -178,8 +178,8 @@ module a22oi_fo_x9(
   input  wire [8:0] B2,
   output wire [8:0] Y
 );
-  wire [3:1] A; fanout3 fo_r(.A(A1), .X(A));
-  wire [3:1] B; fanout3 fo_r(.A(B1), .X(B));
+  wire [3:1] A; fanout3 fo_A(.A(A1), .X(A));
+  wire [3:1] B; fanout3 fo_B(.A(B1), .X(B));
 
   (* keep *) sg13g2_a22oi_1 a22oi_0(.A1(A[1]), .A2(A2[0]), .B1(B[1]), .B2(B2[0]), .Y(Y[0]));
   (* keep *) sg13g2_a22oi_1 a22oi_1(.A1(A[1]), .A2(A2[1]), .B1(B[1]), .B2(B2[1]), .Y(Y[1]));
