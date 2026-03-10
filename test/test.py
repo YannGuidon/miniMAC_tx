@@ -28,11 +28,11 @@ Din_8      = 128
 def input_parameter(val):
   dut.ui_in.value = val & 255
   # MSB and DEN set
-  dut.uio_in.value = (dut.uio_in.value & (255-(Din_8))) | DEN | (Din_8 & (val >> 1))
+  dut.uio_in.value = (dut.uio_in.value & (255-(Din_8))) | DEN | (Din_8 & (val >> 1))
   await ClockCycles(dut.clk, 1)
   dut.ui_in.value = val >> 9
   # clear DEN, set MSB
-  dut.uio_in.value = (dut.uio_in.value & (255-(Din_8+DEN))) | (Din_8 & (val >> 10))
+  dut.uio_in.value = (dut.uio_in.value & (255-(Din_8+DEN))) | (Din_8 & (val >> 10))
 
 
 def output_parameter():
