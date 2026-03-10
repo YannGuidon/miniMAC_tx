@@ -82,24 +82,25 @@ module tt_um_miniMAC (
   // Some pretend work (for now)
   Hammer18x4 Ham(.I(FirstWord), .O(LastWord));
 
+
   // Output buffers
-  wire Zero_value;
+  wire Zero_value, QEN1, QEN2;
   wire [17:0] LastWord;
   wire [8:0]  LastHalfWord, LastMSB;
 
+  // shift register : Den_OK => QEN1 => QEN2
+  (* keep *) sg13g2_dfrbpq_1 DFF_QEN1(.Q(QEN1), .D(Den_OK), .RESET_B(INT_RESET), .CLK(clk));
+  assign QEN = QEN1;
+  (* keep *) sg13g2_dfrbpq_1 DFF_QEN2(.Q(QEN2), .D(QEN1),   .RESET_B(INT_RESET), .CLK(clk));
+  
   or16 zo16(.A(LastWord[15:0]), .X(Zero_value));   // OR the 16 LSB  (beware of C/D !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!)
   (* keep *) sg13g2_dfrbpq_1 DFF_sero(.Q(Zero), .D(Zero_value), .RESET_B(INT_RESET), .CLK(clk));  // Latch & output the sum
 
   dff_x9 dffMSB(.D(LastWord[17:9]), .Q(LastMSB), .clk(clk), .rst(INT_RESET));
-  a22oi_fo_x9 sel2(.A1(Decode), .A2(LastWord[8:0]),
-                   .B1(Encode), .B2(LastMSB),
+  a22oi_fo_x9 sel2(.A1(QEN1), .A2(LastWord[8:0]),
+                   .B1(QEN2), .B2(LastMSB),
                    .Y(LastHalfWord));
   dff_x9 dffOut(.D(LastHalfWord), .Q(Dout9), .clk(clk), .rst(INT_RESET));  // Latch & output the data halfword
 
-  // Dumb loopback
-//  assign Dout9 = Din9;
-  assign QEN = DEN;
-//  assign CLK_out = Encode;
-//  assign Zero = Decode ^ Encode ^ INT_RESET;
   
 endmodule
