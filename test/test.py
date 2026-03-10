@@ -31,7 +31,7 @@ async def input_parameter(val, dut):
   # MSB and DEN set
   dut.uio_in.value = t | DEN | (Din_8 & (val >> 1))
   await ClockCycles(dut.clk, 1)
-  dut.ui_in.value = val >> 9
+  dut.ui_in.value = (val >> 9) & 255
   # clear DEN, set MSB
   dut.uio_in.value = t | (Din_8 & (val >> 10))
 
