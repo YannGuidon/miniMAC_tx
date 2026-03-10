@@ -94,7 +94,7 @@ module tt_um_miniMAC (
   (* keep *) sg13g2_dfrbpq_1 DFF_QEN2(.Q(QEN2), .D(QEN1),   .RESET_B(INT_RESET), .CLK(clk));
 
   // Zero flag is 1 when all the 16 data bits are 0:
-  nor16 zo16(.A({LastWord[16:9], LastWord[7:0]), .X(Zero_value));   // does not NOR the C/D bit!)
+  nor16 zo16(.A({LastWord[16:9], LastWord[7:0]}), .X(Zero_value));   // does not NOR the C/D bit!)
   (* keep *) sg13g2_dfrbpq_1 DFF_sero(.Q(Zero), .D(Zero_value), .RESET_B(INT_RESET), .CLK(clk));  // Latch & output the sum
 
   // Multiplex the last half words:
