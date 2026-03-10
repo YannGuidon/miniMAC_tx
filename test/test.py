@@ -5,6 +5,49 @@ import cocotb
 from cocotb.clock import Clock
 from cocotb.triggers import ClockCycles
 
+#  assign uo_out     = Dout9[7:0];
+#  assign Din9[7:0]  = ui_in;
+#  assign uio_out[0] = Dout9[8];
+#  assign uio_out[1] = QEN;
+#  assign uio_out[2] = CLK_out;
+#  assign uio_out[3] = Zero;
+#  assign DEN        = uio_in[4];
+#  assign Encode     = uio_in[5];
+#  assign Decode     = uio_in[6];
+#  assign Din9[8]    = uio_in[7];
+
+Dout_8     =   1
+QEN        =   2
+CLK_out    =   4
+Zero       =   8
+DEN        =  16
+Encode     =  32
+Decode     =  64
+Din_8      = 128
+
+def input_parameter(val):
+  dut.ui_in.value = val & 255
+  # MSB and DEN set
+  dut.uio_in.value = (dut.uio_in.value & (255-(Din_8))) | DEN | (Din_8 & (val >> 1))
+  await ClockCycles(dut.clk, 1)
+  dut.ui_in.value = val >> 9
+  # clear DEN, set MSB
+  dut.uio_in.value = (dut.uio_in.value & (255-(Din_8+DEN))) | (Din_8 & (val >> 10))
+
+
+def output_parameter():
+  timeout = 0
+  while (dut.uio_out.value & QEN) == 0:
+    timeout = timeout + 1
+    if count > 10:
+      return -1
+    await ClockCycles(dut.clk, 1)
+  val = dut.uo_out.value + (dut.uio_out.value & Dout_8)<<8)
+  # expect DEN=0 here
+  await ClockCycles(dut.clk, 1)
+  return val+ ((dut.uo_out.value + (dut.uio_out.value & Dout_8)<<8) << 9)
+  
+
 # Test vectors for a direct Hammer18 lookup.
 vectors = [
 ["111111111111111111", "101011111000110100"],
@@ -54,33 +97,37 @@ vectors = [
 
 @cocotb.test()
 async def test_project(dut):
-    dut._log.info("Start")
+  dut._log.info("Start")
 
-    # Set the clock period to 10 us (100 KHz)
-    clock = Clock(dut.clk, 10, unit="us")
-    cocotb.start_soon(clock.start())
+  # Set the clock period to 10 us (100 KHz)
+  clock = Clock(dut.clk, 10, unit="us")
+  cocotb.start_soon(clock.start())
 
-    # Reset
-    dut._log.info("Reset")
-    dut.ena.value = 1
-    dut.ui_in.value = 0
-    dut.uio_in.value = 0
-    dut.rst_n.value = 0
-    await ClockCycles(dut.clk, 10)
-    dut.rst_n.value = 1
+  # Reset
+  dut._log.info("Reset")
+  dut.ena.value = 1
+  dut.ui_in.value = 0
+  dut.uio_in.value = 0
+  dut.rst_n.value = 0
+  await ClockCycles(dut.clk, 3)
+  dut.rst_n.value = 1
+  await ClockCycles(dut.clk, 3)
 
-    dut._log.info("Test project behavior")
+  dut._log.info("Starting")
+  for x in vectors:
+    i = int(x[0],2)
+    o = int(x[1],2)
+    print("testing " + x[0] + " = " + x[1]);
+    input_parameter(i)
+    await ClockCycles(dut.clk, 4)
 
-    # Set the input values you want to test
-    dut.ui_in.value = 20
-    #dut.uio_in.value = 30
+  # Set the input values you want to test
+  #dut.ui_in.value = 20
+  #dut.uio_in.value = 30
 
-    # Wait for one clock cycle to see the output values
-    await ClockCycles(dut.clk, 1)
+  # Wait for one clock cycle to see the output values
+  await ClockCycles(dut.clk, 10)
 
-    # The following assersion is just an example of how to check the output values.
-    # Change it to match the actual expected output of your module:
-    #assert dut.uo_out.value == 50
-
-    # Keep testing the module by changing the input values, waiting for
-    # one or more clock cycles, and asserting the expected output values.
+  # The following assersion is just an example of how to check the output values.
+  # Change it to match the actual expected output of your module:
+  #assert dut.uo_out.value == 50
