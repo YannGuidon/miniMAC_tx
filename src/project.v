@@ -92,14 +92,18 @@ module tt_um_miniMAC (
   (* keep *) sg13g2_dfrbpq_1 DFF_QEN1(.Q(QEN1), .D(Den_OK), .RESET_B(INT_RESET), .CLK(clk));
   assign QEN = QEN1;
   (* keep *) sg13g2_dfrbpq_1 DFF_QEN2(.Q(QEN2), .D(QEN1),   .RESET_B(INT_RESET), .CLK(clk));
-  
-  or16 zo16(.A(LastWord[15:0]), .X(Zero_value));   // OR the 16 LSB  (beware of C/D !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!)
+
+  // Zero flag is 1 when all the 16 data bits are 0:
+  nor16 zo16(.A({LastWord[16:9], LastWord[7:0]), .X(Zero_value));   // does not NOR the C/D bit!)
   (* keep *) sg13g2_dfrbpq_1 DFF_sero(.Q(Zero), .D(Zero_value), .RESET_B(INT_RESET), .CLK(clk));  // Latch & output the sum
 
+  // Multiplex the last half words:
+  // save the MSB for the next cycle
   dff_x9 dffMSB(.D(LastWord[17:9]), .Q(LastMSB), .clk(clk), .rst(INT_RESET));
-  a22oi_fo_x9 sel2(.A1(QEN1), .A2(LastWord[8:0]),
-                   .B1(QEN2), .B2(LastMSB),
-                   .Y(LastHalfWord));
+  a22o_fo_x9 sel2(.A1(QEN1), .A2(LastWord[8:0]),
+                  .B1(QEN2), .B2(LastMSB),
+                  .Y(LastHalfWord));  // Select MSB/LSB
+  // The output buffer
   dff_x9 dffOut(.D(LastHalfWord), .Q(Dout9), .clk(clk), .rst(INT_RESET));  // Latch & output the data halfword
 
   
