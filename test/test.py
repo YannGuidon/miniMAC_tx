@@ -116,10 +116,11 @@ async def test_project(dut):
   dut._log.info("Starting")
   for x in vectors:
     i = int(x[0],2)
-    o = int(x[1],2)
-    print("testing " + x[0] + " = " + x[1]);
+    v = int(x[1],2)
+    print("testing " + x[0] + " => " + x[1]);
     input_parameter(i, dut)
-    await ClockCycles(dut.clk, 4)
+    o = output_parameter(dut)
+    print(" - found                     " + bin(o))
 
   # Set the input values you want to test
   #dut.ui_in.value = 20
