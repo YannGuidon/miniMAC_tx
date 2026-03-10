@@ -42,7 +42,7 @@ def output_parameter():
     if count > 10:
       return -1
     await ClockCycles(dut.clk, 1)
-  val = dut.uo_out.value + (dut.uio_out.value & Dout_8)<<8)
+  val = dut.uo_out.value + ((dut.uio_out.value & Dout_8)<<8)
   # expect DEN=0 here
   await ClockCycles(dut.clk, 1)
   return val+ ((dut.uo_out.value + (dut.uio_out.value & Dout_8)<<8) << 9)
