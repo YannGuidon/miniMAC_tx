@@ -193,6 +193,37 @@ module a22oi_fo_x9(
   (* keep *) sg13g2_a22oi_1 a22oi_8(.A1(A[3]), .A2(A2[8]), .B1(B[3]), .B2(B2[8]), .Y(Y[8]));
 endmodule
 
+module a22o_fo_x9(
+  input             A1,
+  input  wire [8:0] A2,
+  input             B1,
+  input  wire [8:0] B2,
+  output wire [8:0] Y
+);
+  wire [3:1] A; fanout3 fo_A(.A(A1), .X(A));
+  wire [3:1] B; fanout3 fo_B(.A(B1), .X(B));
+  wire [8:0] t;
+  (* keep *) sg13g2_a22oi_1 a22oi_0(.A1(A[1]), .A2(A2[0]), .B1(B[1]), .B2(B2[0]), .Y(t[0]));
+  (* keep *) sg13g2_a22oi_1 a22oi_1(.A1(A[1]), .A2(A2[1]), .B1(B[1]), .B2(B2[1]), .Y(t[1]));
+  (* keep *) sg13g2_a22oi_1 a22oi_2(.A1(A[1]), .A2(A2[2]), .B1(B[1]), .B2(B2[2]), .Y(t[2]));
+  (* keep *) sg13g2_a22oi_1 a22oi_3(.A1(A[2]), .A2(A2[3]), .B1(B[2]), .B2(B2[3]), .Y(t[3]));
+  (* keep *) sg13g2_a22oi_1 a22oi_4(.A1(A[2]), .A2(A2[4]), .B1(B[2]), .B2(B2[4]), .Y(t[4]));
+  (* keep *) sg13g2_a22oi_1 a22oi_5(.A1(A[2]), .A2(A2[5]), .B1(B[2]), .B2(B2[5]), .Y(t[5]));
+  (* keep *) sg13g2_a22oi_1 a22oi_6(.A1(A[3]), .A2(A2[6]), .B1(B[3]), .B2(B2[6]), .Y(t[6]));
+  (* keep *) sg13g2_a22oi_1 a22oi_7(.A1(A[3]), .A2(A2[7]), .B1(B[3]), .B2(B2[7]), .Y(t[7]));
+  (* keep *) sg13g2_a22oi_1 a22oi_8(.A1(A[3]), .A2(A2[8]), .B1(B[3]), .B2(B2[8]), .Y(t[8]));
+
+  (* keep *) sg13g2_inv_1 in0(.Y(Y[0]), .A(t[0]));
+  (* keep *) sg13g2_inv_1 in1(.Y(Y[1]), .A(t[1]));
+  (* keep *) sg13g2_inv_1 in2(.Y(Y[2]), .A(t[2]));
+  (* keep *) sg13g2_inv_1 in3(.Y(Y[3]), .A(t[3]));
+  (* keep *) sg13g2_inv_1 in4(.Y(Y[4]), .A(t[4]));
+  (* keep *) sg13g2_inv_1 in5(.Y(Y[5]), .A(t[5]));
+  (* keep *) sg13g2_inv_1 in6(.Y(Y[6]), .A(t[6]));
+  (* keep *) sg13g2_inv_1 in7(.Y(Y[7]), .A(t[7]));
+  (* keep *) sg13g2_inv_1 in8(.Y(Y[8]), .A(t[8]));
+endmodule
+
 module or16(
   input  wire [15:0] A,
   output wire        X
