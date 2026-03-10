@@ -25,7 +25,7 @@ Encode     =  32
 Decode     =  64
 Din_8      = 128
 
-def input_parameter(val):
+async def input_parameter(val, dut):
   dut.ui_in.value = val & 255
   # MSB and DEN set
   dut.uio_in.value = (dut.uio_in.value & (255-(Din_8))) | DEN | (Din_8 & (val >> 1))
@@ -35,7 +35,7 @@ def input_parameter(val):
   dut.uio_in.value = (dut.uio_in.value & (255-(Din_8+DEN))) | (Din_8 & (val >> 10))
 
 
-def output_parameter():
+async def output_parameter(dut):
   timeout = 0
   while (dut.uio_out.value & QEN) == 0:
     timeout = timeout + 1
@@ -118,7 +118,7 @@ async def test_project(dut):
     i = int(x[0],2)
     o = int(x[1],2)
     print("testing " + x[0] + " = " + x[1]);
-    input_parameter(i)
+    input_parameter(i, dut)
     await ClockCycles(dut.clk, 4)
 
   # Set the input values you want to test
