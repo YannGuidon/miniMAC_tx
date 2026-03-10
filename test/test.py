@@ -34,6 +34,7 @@ async def input_parameter(val, dut):
   dut.ui_in.value = (val >> 9) & 255
   # clear DEN, set MSB
   dut.uio_in.value = t | (Din_8 & (val >> 10))
+  await ClockCycles(dut.clk, 1)
 
 
 async def output_parameter(dut):
