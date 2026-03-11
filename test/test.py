@@ -18,6 +18,12 @@ Encode     =  32
 Decode     =  64
 Din_8      = 128
 
+async def reset_state(dut):
+  dut.rst_n.value = 0
+  await ClockCycles(dut.clk, 3)
+  dut.rst_n.value = 1
+  await ClockCycles(dut.clk, 3)
+
 async def input_parameter(val, mode, dut):
   dut.ui_in.value = val & 255
   # MSB and DEN set
@@ -90,6 +96,17 @@ vectors = [
 ["100011000001110011", "101100010000011011"],
 ["001110001011100000", "101111110000110100"]]
 
+sequence = [
+ 10,      # index=10
+ 3147,
+ 228245,
+ 77,
+ 227223,
+ 227216,
+ 86,
+ 96676,
+ 134782,
+ 134777 ]  # index=19
 
 @cocotb.test()
 async def test_project(dut):
@@ -104,10 +121,7 @@ async def test_project(dut):
   dut.ena.value = 1
   dut.ui_in.value = 0
   dut.uio_in.value = 0
-  dut.rst_n.value = 0
-  await ClockCycles(dut.clk, 3)
-  dut.rst_n.value = 1
-  await ClockCycles(dut.clk, 3)
+  await reset_state(dut)  
 
   # test in direct mode (mode=0)
   dut._log.info("Starting Direct Mode")
@@ -122,21 +136,32 @@ async def test_project(dut):
 
   await ClockCycles(dut.clk, 6)
 
-  #  reset the states
-  dut.rst_n.value = 0
-  await ClockCycles(dut.clk, 3)
-  dut.rst_n.value = 1
-  await ClockCycles(dut.clk, 3)
+  #  reset the states again
+  await reset_state(dut)  
 
-  # test in Encode mode (mode=0)
-  dut._log.info("Starting Direct Mode")
+  dut._log.info("Starting Encode Mode")
+  i = 10
+  for x in sequence:
+    await input_parameter(i, Encode, dut)
+    t = await output_parameter(dut)
+    print(str(i) + " : " + str(t) + "   expected "+ str(x))
+    assert t == x
+    i = i+1
 
-  Results = []
-  for x in range(10, 20):
+
+  #  reset the states again again
+  await reset_state(dut)  
+
+  dut._log.info("Starting Decode Mode")
+  i = 10
+  for x in sequence:
     await input_parameter(x, Encode, dut)
     t = await output_parameter(dut)
-    print(str(x) + " : " + str(t))
-    Results.append(t)
-  
+    print(str(i) + " : " + str(t))
+    # assert t == i
+    i = i+1
+
+
+
   await ClockCycles(dut.clk, 6)
   dut._log.info("Done.")
