@@ -90,8 +90,8 @@ module tt_um_miniMAC (
 
   // shift register : Den_OK => QEN1 => QEN2
   (* keep *) sg13g2_dfrbpq_1 DFF_QEN1(.Q(QEN1), .D(Den_OK), .RESET_B(INT_RESET), .CLK(clk));
-  assign QEN = QEN1;
   (* keep *) sg13g2_dfrbpq_1 DFF_QEN2(.Q(QEN2), .D(QEN1),   .RESET_B(INT_RESET), .CLK(clk));
+  assign QEN = QEN2;
 
   // Zero flag is 1 when all the 16 data bits are 0:
   nor16 zo16(.A({LastWord[16:9], LastWord[7:0]}), .X(Zero_value));   // does not NOR the C/D bit!)
