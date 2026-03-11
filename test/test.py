@@ -38,7 +38,7 @@ async def output_parameter(dut):
       return -1
     await ClockCycles(dut.clk, 1)
 
-  print("waited " + str(timeout))  
+  #print("waited " + str(timeout))  
   # LSB first:
   val = int(dut.uo_out.value) + ((int(dut.uio_out.value) & Dout_8)<<8)
   #print("uo=" + bin(int(dut.uo_out.value)) + "   uio=" + bin(int(dut.uio_out.value))  + "   QEN=" + str(dut.uio_out.value[1]))
@@ -90,10 +90,6 @@ vectors = [
 ["100011000001110011", "101100010000011011"],
 ["001110001011100000", "101111110000110100"]]
 
-#for x in vectors:
-#  print(str(int(x[0],2)) + " = " + str(int(x[1],2)));
-
-
 
 @cocotb.test()
 async def test_project(dut):
@@ -120,8 +116,8 @@ async def test_project(dut):
     print("testing " + x[0] + " => " + x[1]);
     await input_parameter(i, dut)
     o = await output_parameter(dut)
-    print(" - found                 " + bin(o + (1 << 20)))
-    print("")
+    #print(" - found                 " + bin(o + (1 << 20)))
+    #print("")
     assert v == o
     await ClockCycles(dut.clk, 1)
 
