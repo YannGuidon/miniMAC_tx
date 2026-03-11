@@ -1,6 +1,8 @@
 # SPDX-FileCopyrightText: © 2024 Tiny Tapeout
 # SPDX-License-Identifier: Apache-2.0
 
+# Test the Hammer18 scrambler in direct, encoding and decoding modes.
+
 import cocotb
 from cocotb.clock import Clock
 from cocotb.triggers import ClockCycles
@@ -16,16 +18,14 @@ Encode     =  32
 Decode     =  64
 Din_8      = 128
 
-async def input_parameter(val, dut):
-  t = int(dut.uio_in.value) & (255-(Din_8+DEN))
+async def input_parameter(val, mode, dut):
   dut.ui_in.value = val & 255
   # MSB and DEN set
-  dut.uio_in.value = t | DEN | (Din_8 & (val >> 1))
+  dut.uio_in.value = mode | DEN | (Din_8 & (val >> 1))
   await ClockCycles(dut.clk, 1)
   dut.ui_in.value = (val >> 9) & 255
   # clear DEN, set MSB
-  dut.uio_in.value = t | (Din_8 & (val >> 10))
-  #await ClockCycles(dut.clk, 1)
+  dut.uio_in.value = mode | (Din_8 & (val >> 10))
 
 
 async def output_parameter(dut):
@@ -109,25 +109,19 @@ async def test_project(dut):
   dut.rst_n.value = 1
   await ClockCycles(dut.clk, 3)
 
+  # test in direct mode (mode=0)
+
   dut._log.info("Starting")
   for x in vectors:
     i = int(x[0],2)
     v = int(x[1],2)
     print("testing " + x[0] + " => " + x[1]);
-    await input_parameter(i, dut)
+    await input_parameter(i, 0, dut)  # Encode = Decode = 0 => direct mode
     o = await output_parameter(dut)
     print(" - found                 " + bin(o + (1 << 20)))
-    #print("")
     assert v == o
-    #await ClockCycles(dut.clk, 1)
 
-  # Set the input values you want to test
-  #dut.ui_in.value = 20
-  #dut.uio_in.value = 30
 
-  # Wait for one clock cycle to see the output values
   await ClockCycles(dut.clk, 4)
 
-  # The following assersion is just an example of how to check the output values.
-  # Change it to match the actual expected output of your module:
-  #assert dut.uo_out.value == 50
+  # the end
