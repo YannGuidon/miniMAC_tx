@@ -5,10 +5,6 @@
   Just because I don't want to learn Verilog.
 */
 
-module fanout3(
-  input  wire A,
-  output wire [2:0] X
-);
   /*
   wire N;
   (* keep *) sg13g2_inv_1 foN(.Y(N),    .A(A));
@@ -16,7 +12,12 @@ module fanout3(
   (* keep *) sg13g2_inv_1 fo1(.Y(X[1]), .A(N));
   (* keep *) sg13g2_inv_1 fo2(.Y(X[2]), .A(N));
   */
-  assign X = { 3{A} };
+
+module fanout3(
+  input  wire A,
+  output wire [2:0] X
+);
+  assign X = { A, A, A };
 endmodule
 
 module fanout4(
