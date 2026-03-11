@@ -133,7 +133,6 @@ async def test_project(dut):
 
   Results = []
   for x in range(10, 20):
-    printf(str(x))
     await input_parameter(x, Encode, dut)
     t = await output_parameter(dut)
     print(str(x) + " : " + str(t))
