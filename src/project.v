@@ -83,10 +83,10 @@ module tt_um_miniMAC (
   // Multi-mode Hammer18 unit
   wire DecOrEnc;
   (* keep *) sg13g2_or2_1 OrSel(.A(Encode), .B(Decode), .X(DecOrEnc));
-  wire [8:0] Hammer_operand, Hammer_result, Hammer_delayed, Hammer_mixed;
+  wire [17:0] Hammer_operand, Hammer_result, Hammer_delayed, Hammer_mixed;
   mux2_x18 selOperand(.sel(Decode), .if0(FirstWord), .if1(Hammer_mixed), .res(Hammer_operand));
   Hammer18x4 Ham(.I(Hammer_operand), .O(Hammer_result));
-  dffen_x18  delayHam(.clk(clk), .rst(INT_RESET), .D(Hammer_result), .Q(Hammer_delayed), .en(QEN1));
+  dffen_x18 delayHam(.clk(clk), .rst(INT_RESET), .D(Hammer_result), .Q(Hammer_delayed), .en(QEN1));
   xor2_x18 mixData(.A(FirstWord), .B(Hammer_delayed), .X(Hammer_mixed) );
   mux2_x18 selResult( .sel(DecOrEnc), .if0(Hammer_result), .if1(Hammer_mixed), .res(LastWord) );
 
