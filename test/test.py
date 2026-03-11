@@ -136,7 +136,7 @@ async def test_project(dut):
     printf(str(x))
     await input_parameter(x, Encode, dut)
     t = await output_parameter(dut)
-    printf(str(x) + " : " + str(t))
+    print(str(x) + " : " + str(t))
     Results.append(t)
   
   await ClockCycles(dut.clk, 6)
