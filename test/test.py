@@ -155,7 +155,7 @@ async def test_project(dut):
   dut._log.info("Starting Decode Mode")
   i = 10
   for x in sequence:
-    await input_parameter(x, Encode, dut)
+    await input_parameter(x, Decode, dut)
     t = await output_parameter(dut)
     print(str(i) + " : " + str(t))
     # assert t == i
