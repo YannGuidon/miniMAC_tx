@@ -40,7 +40,7 @@ async def input_parameter(val, dut):
 async def output_parameter(dut):
   timeout = 0
   print(bin(int(dut.uio_out.value))  + "  " + bin(int(dut.uo_out.value)));
-  while (int(dut.uo_out.value) & QEN) == 0:
+  while (int(dut.uio_out.value) & QEN) == 0:
     timeout = timeout + 1
     if timeout > 10:
       print("timeout !")
