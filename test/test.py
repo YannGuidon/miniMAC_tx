@@ -26,7 +26,7 @@ async def input_parameter(val, mode, dut):
   dut.ui_in.value = (val >> 9) & 255
   # clear DEN, set MSB
   dut.uio_in.value = mode | (Din_8 & (val >> 10))
-
+  await ClockCycles(dut.clk, 1)
 
 async def output_parameter(dut):
   timeout = 0
@@ -110,8 +110,7 @@ async def test_project(dut):
   await ClockCycles(dut.clk, 3)
 
   # test in direct mode (mode=0)
-
-  dut._log.info("Starting")
+  dut._log.info("Starting Direct Mode")
   for x in vectors:
     i = int(x[0],2)
     v = int(x[1],2)
@@ -121,7 +120,20 @@ async def test_project(dut):
     print(" - found                 " + bin(o + (1 << 20)))
     assert v == o
 
+  await ClockCycles(dut.clk, 6)
 
-  await ClockCycles(dut.clk, 4)
+  #  reset the states
+  dut.rst_n.value = 0
+  await ClockCycles(dut.clk, 3)
+  dut.rst_n.value = 1
+  await ClockCycles(dut.clk, 3)
 
-  # the end
+  # test in Encode mode (mode=0)
+  dut._log.info("Starting Direct Mode")
+  await input_parameter(1, Encode, dut)
+  
+  for x in range(0, 20):
+    await input_parameter(0, Encode, dut)
+  
+  await ClockCycles(dut.clk, 6)
+  dut._log.info("Done.")
