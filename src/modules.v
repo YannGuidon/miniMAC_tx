@@ -5,6 +5,10 @@
   Just because I don't want to learn Verilog.
 */
 
+module fanout3(
+  input  wire A,
+  output wire [2:0] X
+);
   /*
   wire N;
   (* keep *) sg13g2_inv_1 foN(.Y(N),    .A(A));
@@ -12,16 +16,10 @@
   (* keep *) sg13g2_inv_1 fo1(.Y(X[1]), .A(N));
   (* keep *) sg13g2_inv_1 fo2(.Y(X[2]), .A(N));
   */
-
-module fanout3(
-  input  wire A,
-  output wire [2:0] X
-);
-//  assign X[0] = A;
-//  assign X[1] = A;
-//  assign X[2] = A;
-
-  assign X[2:0] = { 3{A} };
+  assign X[0] = A;
+  assign X[1] = A;
+  assign X[2] = A;
+  //  assign X[2:0] = { 3{A} }; syntax error ???
 endmodule
 
 module fanout4(
@@ -36,7 +34,11 @@ module fanout4(
   (* keep *) sg13g2_inv_1 fo2(.Y(X[2]), .A(N));
   (* keep *) sg13g2_inv_1 fo3(.Y(X[3]), .A(N));
   */
-  assign X = { 4{A} };
+  assign X[0] = A;
+  assign X[1] = A;
+  assign X[2] = A;
+  assign X[3] = A;
+  // assign X = { 4{A} };
 endmodule
 
 
