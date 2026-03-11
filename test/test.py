@@ -29,7 +29,7 @@ async def input_parameter(val, dut):
 
 
 async def output_parameter(dut):
-  for j in (0 to 6):
+  for j in range(6):
     print("uio=" + bin(int(dut.uio_out.value))  + "   uo=" + bin(int(dut.uo_out.value)))
     await ClockCycles(dut.clk, 1)
   return (1<<19)
