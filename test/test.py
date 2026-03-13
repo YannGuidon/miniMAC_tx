@@ -3,6 +3,10 @@
 
 # Test the Hammer18 scrambler in direct, encoding and decoding modes.
 
+enable_bypass = False
+enable_encode = False
+enable_decode = True
+
 import cocotb
 from cocotb.clock import Clock
 from cocotb.triggers import ClockCycles
@@ -121,45 +125,44 @@ async def test_project(dut):
   dut.ena.value = 1
   dut.ui_in.value = 0
   dut.uio_in.value = 0
-  await reset_state(dut)  
 
-  # test in direct mode (mode=0)
-  dut._log.info("Starting Direct Mode")
-  for x in vectors:
-    i = int(x[0],2)
-    v = int(x[1],2)
-    print("testing " + x[0] + " => " + x[1]);
-    await input_parameter(i, 0, dut)  # Encode = Decode = 0 => direct mode
-    o = await output_parameter(dut)
-    print(" - found                 " + bin(o + (1 << 20)))
-    assert v == o
+  # Test in direct mode (mode=0)
+  if enable_bypass:
+    await reset_state(dut)  
+    dut._log.info("Starting Direct Mode")
+    for x in vectors:
+      i = int(x[0],2)
+      v = int(x[1],2)
+      print("testing " + x[0] + " => " + x[1]);
+      await input_parameter(i, 0, dut)  # Encode = Decode = 0 => direct mode
+      o = await output_parameter(dut)
+      print(" - found                 " + bin(o + (1 << 20)))
+      assert v == o
+    await ClockCycles(dut.clk, 6)
 
-  await ClockCycles(dut.clk, 6)
+  #  Test in encode mode (mode=Encode)
+  if enable_encode:
+    await reset_state(dut)  
+    dut._log.info("Starting Encode Mode")
+    i = 10
+    for x in sequence:
+      await input_parameter(i, Encode, dut)
+      t = await output_parameter(dut)
+      print(str(i) + " : " + str(t) + "   expected "+ str(x))
+      assert t == x
+      i = i+1
 
-  #  reset the states again
-  await reset_state(dut)  
-
-  dut._log.info("Starting Encode Mode")
-  i = 10
-  for x in sequence:
-    await input_parameter(i, Encode, dut)
-    t = await output_parameter(dut)
-    print(str(i) + " : " + str(t) + "   expected "+ str(x))
-    assert t == x
-    i = i+1
-
-
-  #  reset the states again again
-  await reset_state(dut)  
-
-  dut._log.info("Starting Decode Mode")
-  i = 10
-  for x in sequence:
-    await input_parameter(x, Decode, dut)
-    t = await output_parameter(dut)
-    print(str(i) + " : " + bin((1 << 20) + (i ^ t)) + "  " + str(t))
-    #assert t == i
-    i = i+1
+  #  mode=Decode
+  if enable_encode:
+    await reset_state(dut)  
+    dut._log.info("Starting Decode Mode")
+    i = 10
+    for x in sequence:
+      await input_parameter(x, Decode, dut)
+      t = await output_parameter(dut)
+      print(str(i) + " : " + bin((1 << 20) + (i ^ t)) + "  " + str(t))
+      #assert t == i
+      i = i+1
 
   await ClockCycles(dut.clk, 6)
   dut._log.info("Done.")
