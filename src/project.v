@@ -110,11 +110,12 @@ module tt_um_miniMAC (
   (* keep *) sg13g2_nand2_1 NandSel(.A(Encode), .B(Decode), .Y(DecNandEnc));
   wire [17:0] HammerDec_operand, HammerDec_result, HammerDec_delayed, HammerDec_mixed;
 
-  mux2_x18 selOperand( .sel(DecNandEnc), .if0(HammerEnc_mixed), .if1(FirstWord), .res(HammerDec_operand) );
-  xor2_x18 mixDec(.A(HammerDec_operand), .B(HammerDec_delayed), .X(HammerDec_mixed) );
+//  mux2_x18 selOperand( .sel(DecNandEnc), .if0(HammerEnc_mixed), .if1(FirstWord), .res(HammerDec_operand) );
+//  xor2_x18 mixDec(.A(HammerDec_operand), .B(HammerDec_delayed), .X(HammerDec_mixed) );
+
+  xor2_x18 mixDec(.A(FirstWord), .B(HammerDec_delayed), .X(HammerDec_mixed) );
   Hammer18x4 HamDec(.I(HammerDec_operand), .O(HammerDec_result));
   dffen_x18 delayDec(.clk(clk), .rst(INT_RESET), .D(HammerDec_result), .Q(HammerDec_delayed), .en(DecResult_En));
-
 
   // Result selector
   wire [17:0] tmpSel;
