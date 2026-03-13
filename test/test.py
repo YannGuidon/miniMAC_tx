@@ -153,7 +153,7 @@ async def test_project(dut):
       i = i+1
 
   #  mode=Decode
-  if enable_encode == True:
+  if enable_decode == True:
     await reset_state(dut)  
     dut._log.info("Starting Decode Mode")
     i = 10
