@@ -57,7 +57,7 @@ async def output_parameter(dut):
   #print("phase1: " + str(dut.uio_out.value) + " : " + str(dut.uo_out.value))
   assert dut.uio_out.value[1] == 0
   #print("uo=" + bin(int(dut.uo_out.value)) + "   uio=" + bin(int(dut.uio_out.value))  + "   QEN=" + str(dut.uio_out.value[1]))
-  return val + (( int(dut.uo_out.value) + ((int(dut.uio_out.value[0])<<8) << 9)
+  return val + (( int(dut.uo_out.value) + (int(dut.uio_out.value[0])<<8)) << 9)
 
 
 # Test vectors for a direct Hammer18 lookup.
