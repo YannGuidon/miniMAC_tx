@@ -107,7 +107,7 @@ module tt_um_miniMAC (
   wire DecResult_En;
   assign DecResult_En = QEN1;  //////////////////////////////////////////////////////////////// à changer après
   wire DecNandEnc;
-  (* keep *) sg13g2_nand2_1 NandSel(.A(Encode), .B(Decode), .X(DecNandEnc));
+  (* keep *) sg13g2_nand2_1 NandSel(.A(Encode), .B(Decode), .Y(DecNandEnc));
   wire [17:0] HammerDec_operand, HammerDec_result, HammerDec_delayed, HammerDec_mixed;
 
   mux2_x18 selOperand( .sel(DecNandEnc), .if0(HammerEnc_mixed), .if1(FirstWord), .res(HammerDec_operand) );
