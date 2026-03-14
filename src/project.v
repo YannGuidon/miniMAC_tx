@@ -107,7 +107,7 @@ module tt_um_miniMAC (
   wire DecResult_En, Loopback_n;
   wire [17:0] HammerDec_operand, HammerDec_result, HammerDec_delayed, HammerDec_mixed;
   (* keep *) sg13g2_nand2_1 NandSel(.A(Encode), .B(Decode), .Y(Loopback_n));
-  (* keep *) sg13g2_mux2_1 selEncEn(.X(DecResult_En), .A0(EncResult_En), .A1(QEN1), S(Loopback_n));  // en mode loopback sélectionne EN en sortie de l'encodeur
+  (* keep *) sg13g2_mux2_2 selEncEn(.X(DecResult_En), .A0(EncResult_En), .A1(QEN1), S(Loopback_n));  // en mode loopback sélectionne EN en sortie de l'encodeur
   mux2_x18 selOperand( .sel(Loopback_n), .if0(HammerEnc_mixed), .if1(FirstWord), .res(HammerDec_operand) );
   xor2_x18 mixDec(.A(HammerDec_operand), .B(HammerDec_delayed), .X(HammerDec_mixed) );
   Hammer18x4 HamDec(.I(HammerDec_mixed), .O(HammerDec_result));
@@ -126,6 +126,7 @@ module tt_um_miniMAC (
   wire [8:0]  LastHalfWord, LastMSB;
 
   // shift register : Den_OK => QEN1 => QEN2
+    // sélectionner entre Den_OK, EN_ENC et EN_DEC ici...
   (* keep *) sg13g2_dfrbpq_1 DFF_QEN1(.Q(QEN1), .D(Den_OK), .RESET_B(INT_RESET), .CLK(clk));
   (* keep *) sg13g2_dfrbpq_1 DFF_QEN2(.Q(QEN2), .D(QEN1),   .RESET_B(INT_RESET), .CLK(clk));
   assign QEN = QEN2;
