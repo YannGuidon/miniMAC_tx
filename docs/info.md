@@ -69,7 +69,7 @@ Notes :
 - The output/scrambled word contains the C/D bit and an error bit (saves a pin)
 - Asserting DEN during more than one cycle is an error condition.
 - The Zero output is always active (encoding as well as decoding) but gives a valid result only when QEN is asserted. It does only check the data bits: [7:0] and [17:9], conveniently mapped to the output byte pins.
-- Do not change the Enc and Dec (unless in Reset state)
+- Do not change the Enc and Dec while data are in the pipeline, do it during the Reset state.
 
 ## External hardware
 
