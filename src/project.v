@@ -107,7 +107,8 @@ module tt_um_miniMAC (
   wire DecResult_En, Loopback_n;
   wire [17:0] HammerDec_operand, HammerDec_result, HammerDec_delayed, HammerDec_mixed;
   (* keep *) sg13g2_nand2_1 NandSel(.A(Encode), .B(Decode), .Y(Loopback_n));
-  (* keep *) sg13g2_mux2_2 selEncEn(.X(DecResult_En), .A0(EncResult_En), .A1(QEN1), S(Loopback_n));  // en mode loopback sélectionne EN en sortie de l'encodeur
+  assign DecResult_En = QEN1;   //////////////////////////////////////////////////// à changer après
+//  (* keep *) sg13g2_mux2_2 selEncEn(.X(DecResult_En), .A0(EncResult_En), .A1(QEN1), S(Loopback_n));  // en mode loopback sélectionne EN en sortie de l'encodeur
   mux2_x18 selOperand( .sel(Loopback_n), .if0(HammerEnc_mixed), .if1(FirstWord), .res(HammerDec_operand) );
   xor2_x18 mixDec(.A(HammerDec_operand), .B(HammerDec_delayed), .X(HammerDec_mixed) );
   Hammer18x4 HamDec(.I(HammerDec_mixed), .O(HammerDec_result));
