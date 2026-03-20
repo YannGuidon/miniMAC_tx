@@ -3,10 +3,11 @@
 
 # Test the Hammer18 scrambler in direct, encoding and decoding modes.
 
-enable_bypass = True
-enable_encode = True
-enable_decode = True
-enable_loopback = True
+enable_bypass = False
+enable_encode = False
+enable_decode = False
+enable_loopback = False
+enable_compare  = True
 
 import cocotb
 from cocotb.clock import Clock
@@ -178,6 +179,19 @@ async def test_project(dut):
       # print(str(i) + " : " + bin((1 << 20) + (i ^ t)) + "  " + str(t)) # show bit difference
       print(str(x) + " -> " + str(t))
       assert t == x
+
+  # mode loopback but testing the comparator
+  if enable_compare == True:
+    await reset_state(dut)  
+    dut._log.info("Starting Comparator Mode")
+    for i in range(0, 258114):
+      print(i)
+      # Zero should be 0
+
+    print (" ================= "
+    for i in range(258114, 262144):
+      print(i)
+      # Zero should be 1 
 
   
   await ClockCycles(dut.clk, 6)
