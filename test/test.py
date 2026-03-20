@@ -188,7 +188,7 @@ async def test_project(dut):
       print(i)
       # Zero should be 0
 
-    print (" ================= "
+    print (" ================= ")
     for i in range(258114, 262144):
       print(i)
       # Zero should be 1 
