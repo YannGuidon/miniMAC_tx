@@ -184,14 +184,20 @@ async def test_project(dut):
   if enable_compare == True:
     await reset_state(dut)  
     dut._log.info("Starting Comparator Mode")
-    for i in range(0, 258114):
-      print(i)
-      # Zero should be 0
+    for i in range(0, 258114, 2):
+      await input_parameter(i, Decode+Encode, dut)
+      j = await output_parameter(dut)
+      # the Zero flag should be 0
+      if dut.uio_out.value[3] != 0:
+        print(int(i) + "invalid")
 
     print (" ================= ")
-    for i in range(258114, 262144):
-      print(i)
-      # Zero should be 1 
+    for i in range(258114, 262144, 2):
+      await input_parameter(i, Decode+Encode, dut)
+      j = await output_parameter(dut)
+      # the Zero flag should be 1 
+      if dut.uio_out.value[3] != 1:
+        print(int(i) + "invalid")
 
   
   await ClockCycles(dut.clk, 6)
