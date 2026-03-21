@@ -29,10 +29,6 @@ module Compare_modulus(
 endmodule
 
 
-/*
-    modulus: std_ulogic_vector(17 downto 0) := "111111000001000010"; -- 258114; 
-    adjust : std_ulogic_vector(17 downto 0) := "000000111110111110"; -- 4030 = 262144 - modulus;  => inversion sur autre opérande
-*/
 
 /*
 //  INIT_X : std_ulogic_vector(17 downto 0) := "101101101110110111"; -- 187319
@@ -49,24 +45,57 @@ module ConstX_OrPass(
 endmodule
 */
 
+/* adjust : std_ulogic_vector(17 downto 0) := "000000111110111110"; -- 4030 = 262144 - modulus; */
 module ConstAdjOrPass(
     input  wire [17:0] A,
     input  wire C,
     output wire [17:0] X  
 );
-  assign X = A;
-
+  (* keep *) sg13g2_nor2b_1  cstxr(.Y(X[17]), .B_N(A[17]), .A(C));
+  (* keep *) sg13g2_nor2b_1  cstxq(.Y(X[16]), .B_N(A[16]), .A(C));
+  (* keep *) sg13g2_nor2b_1  cstxp(.Y(X[15]), .B_N(A[15]), .A(C));
+  (* keep *) sg13g2_nor2b_1  cstxo(.Y(X[14]), .B_N(A[14]), .A(C));
+  (* keep *) sg13g2_nor2b_1  cstxn(.Y(X[13]), .B_N(A[13]), .A(C));
+  (* keep *) sg13g2_nor2b_1  cstxm(.Y(X[12]), .B_N(A[12]), .A(C));
+  (* keep *) sg13g2_nand2b_1 cstxl(.Y(X[11]), .A_N(A[11]), .B(C));
+  (* keep *) sg13g2_nand2b_1 cstxk(.Y(X[10]), .A_N(A[10]), .B(C));
+  (* keep *) sg13g2_nand2b_1 cstxj(.Y(X[ 9]), .A_N(A[ 9]), .B(C));
+  (* keep *) sg13g2_nand2b_1 cstxi(.Y(X[ 8]), .A_N(A[ 8]), .B(C));
+  (* keep *) sg13g2_nand2b_1 cstxh(.Y(X[ 7]), .A_N(A[ 7]), .B(C));
+  (* keep *) sg13g2_nor2b_1  cstxg(.Y(X[ 6]), .B_N(A[ 6]), .A(C));
+  (* keep *) sg13g2_nand2b_1 cstxf(.Y(X[ 5]), .A_N(A[ 5]), .B(C));
+  (* keep *) sg13g2_nand2b_1 cstxe(.Y(X[ 4]), .A_N(A[ 4]), .B(C));
+  (* keep *) sg13g2_nand2b_1 cstxd(.Y(X[ 3]), .A_N(A[ 3]), .B(C));
+  (* keep *) sg13g2_nand2b_1 cstxc(.Y(X[ 2]), .A_N(A[ 2]), .B(C));
+  (* keep *) sg13g2_nand2b_1 cstxb(.Y(X[ 1]), .A_N(A[ 1]), .B(C));
+  (* keep *) sg13g2_nor2b_1  cstxa(.Y(X[ 0]), .B_N(A[ 0]), .A(C));
 endmodule
 
+//  modulus: std_ulogic_vector(17 downto 0) := "111 111 00 000 1 0000 10"; -- 258114; 
 module ConstModOrNeg(
     input  wire [17:0] A,
     input  wire C,
     output wire [17:0] X  
 );
-  assign X = ~A;
-
+  (* keep *) sg13g2_nand2_1 cstxr(.Y(X[17]), .A(A[17]), .B(C));
+  (* keep *) sg13g2_nand2_1 cstxq(.Y(X[16]), .A(A[16]), .B(C));
+  (* keep *) sg13g2_nand2_1 cstxp(.Y(X[15]), .A(A[15]), .B(C));
+  (* keep *) sg13g2_nand2_1 cstxo(.Y(X[14]), .A(A[14]), .B(C));
+  (* keep *) sg13g2_nand2_1 cstxn(.Y(X[13]), .A(A[13]), .B(C));
+  (* keep *) sg13g2_nand2_1 cstxm(.Y(X[12]), .A(A[12]), .B(C));
+  (* keep *) sg13g2_nor2_1  cstxl(.Y(X[11]), .A(A[11]), .B(C));
+  (* keep *) sg13g2_nor2_1  cstxk(.Y(X[10]), .A(A[10]), .B(C));
+  (* keep *) sg13g2_nor2_1  cstxj(.Y(X[ 9]), .A(A[ 9]), .B(C));
+  (* keep *) sg13g2_nor2_1  cstxi(.Y(X[ 8]), .A(A[ 8]), .B(C));
+  (* keep *) sg13g2_nor2_1  cstxh(.Y(X[ 7]), .A(A[ 7]), .B(C));
+  (* keep *) sg13g2_nand2_1 cstxg(.Y(X[ 6]), .A(A[ 6]), .B(C));
+  (* keep *) sg13g2_nor2_1  cstxf(.Y(X[ 5]), .A(A[ 5]), .B(C));
+  (* keep *) sg13g2_nor2_1  cstxe(.Y(X[ 4]), .A(A[ 4]), .B(C));
+  (* keep *) sg13g2_nor2_1  cstxd(.Y(X[ 3]), .A(A[ 3]), .B(C));
+  (* keep *) sg13g2_nor2_1  cstxc(.Y(X[ 2]), .A(A[ 2]), .B(C));  
+  (* keep *) sg13g2_nand2_1 cstxb(.Y(X[ 1]), .A(A[ 1]), .B(C));
+  (* keep *) sg13g2_nor2_1  cstxa(.Y(X[ 0]), .A(A[ 0]), .B(C));
 endmodule
-
 
 /* a 18-bit adder, I have no mapped/optimised version available (yet)
    and I have no time left for such detail */
