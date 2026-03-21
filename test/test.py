@@ -185,22 +185,19 @@ async def test_project(dut):
     await reset_state(dut)  
     dut._log.info("Starting Comparator Mode => 0")
     #j=100
-    for i in range(0, 258, 2): # 258114
-      await input_parameter(i, Decode+Encode, dut)
-      #if j == 0:
-      print(str(i) + " : " + str(dut.uio_out.value[3]))
-      #j=j-1
-      # the Zero flag should be 0
+    #for i in range(0, 258, 2): # 258114
+    #  await input_parameter(i, Decode+Encode, dut)
+    #  #if j == 0:
+    #  print(str(i) + " : " + str(dut.uio_out.value[3]))
+    #  #j=j-1
+    #  # the Zero flag should be 0
 
     await ClockCycles(dut.clk, 6)
     dut._log.info("Starting Comparator Mode => 1")
     await reset_state(dut)
-    #j=100
-    for i in range(258114, 262144, 2):
+    for i in range(256000, 262144, 2):
       await input_parameter(i, Decode+Encode, dut)
-      #if j == 0:
       print(str(i) + " : " + str(dut.uio_out.value[3]))
-      #j=j-1
       # the Zero flag should be 1 
 
     await ClockCycles(dut.clk, 6)
