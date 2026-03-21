@@ -98,7 +98,7 @@ module Register_InitX(
   input  wire rst,
   input  wire en,
   input  wire [17:0] D,
-  output wire [17:0] Q  
+  output wire [17:0] Q
 );
   wire [17:0] S, R;
   // Init_X = "1011 0110 1110 110 111"
@@ -112,7 +112,7 @@ module Register_InitY(
   input  wire rst,
   input  wire en,
   input  wire [17:0] D,
-  output wire [17:0] Q  
+  output wire [17:0] Q
 );
   wire [17:0] S, R;
   // Init_Y = "01 101  101 0 101 101 101"
@@ -121,3 +121,64 @@ module Register_InitY(
   dffen_rs_x18 register(.clk(clk), .rst(R), .set(S), .en(en), .D(D), .Q(Q));
 endmodule
 
+////////////////////////////////////////////////////////////////////
+
+module gPEAC18_scrambler(
+  input  wire clk,
+  input  wire rst,
+  input  wire Enable,
+  input  wire Phase,
+  input  wire [16:0] Message_in, // C/D bit as Message_in[8]
+  output wire [17:0] Scrambled_out // 0 < data < modulus
+);
+
+  wire [17:0] X;
+  wire [17:0] Y;
+  wire [17:0] OPM;
+  wire [17:0] OPX;
+  wire [17:0] OPY;
+  wire [17:0] ResX;
+  wire [17:0] ResY;
+  wire CinX, CinY, CoutX, CoutY;
+
+  mux2_x18(.sel(Phase), .if0(Message_in), .if1(X), .res(OPM));
+  ConstAdjOrPass(.A(Y), .C(Phase), .X(OPY));
+  Add18 adX(.A(OPM), .B(OPY), .Cin(CinX), .S(ResX), .Cout(CoutX));
+  Register_InitX RegX( .clk(clk), .rst(rst), .en(en), .D(ResX), .Q(X));  // EN à contrôler !
+
+  ConstAdjOrPass(.A(X), .C(Phase), .X(OPX));
+  Add18 adY(.A(OPX), .B(Y), .Cin(CinY), .S(ResY), .Cout(CoutY));
+  Register_InitX RegY( .clk(clk), .rst(rst), .en(en), .D(ResY), .Q(Y));  // EN à contrôler !
+);
+  
+  
+endmodule
+
+////////////////////////////////////////////////////////////////////
+
+module gPEAC18_scrambler(
+  input  wire clk,
+  input  wire rst,
+  input  wire Enable,
+  input  wire Phase,
+  input  wire [17:0] Scrambled_in // 0 < data < modulus
+  output wire [16:0] Message_out, // C/D bit as Message_in[8]
+  output wire Error
+);
+
+  // Sticky error flag : pull rst low to clear
+  wire error_transient, error_MSB, error_Modulus;
+  Compare_modulus cmp(.A(Scrambled_in), .X(error_Modulus));
+  (* keep *) sg13g2_or3_1  ErrCom(.X(error_transient), .A(error_Modulus), .B(error_MSB), .C(Error));
+  (* keep *) sg13g2_dfrbpq_1 dffErr(.Q(Error), .D(error_transient), .RESET_B(rst), .CLK(clk));
+
+  wire [17:0] A;
+  wire [17:0] B;
+  wire [17:0] OPM;
+  wire [17:0] OPX;
+  wire [17:0] OPY1;
+  wire [17:0] OPY2;
+  wire [17:0] ResX;
+  wire [17:0] ResY;
+  wire CinX, CinY, CoutX, CoutY;
+endmodule
