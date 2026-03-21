@@ -126,8 +126,8 @@ endmodule
 module gPEAC18_scrambler(
   input  wire clk,
   input  wire rst,
-  input  wire Enable,
-  input  wire Phase,
+  input  wire Phase0,
+  input  wire Phase1,
   input  wire [16:0] Message_in, // C/D bit as Message_in[8]
   output wire [17:0] X // 0 < data < modulus
 );
@@ -140,14 +140,17 @@ module gPEAC18_scrambler(
   wire [17:0] ResY;
   wire CinX, CinY, CoutX, CoutY, EnX, EnY;
 
-  mux2_x18 mxX(.sel(Phase), .if0({1'b0, Message_in}), .if1(X), .res(OPM));
-  ConstAdjOrPass AdjY(.A(Y), .C(Phase), .X(OPY));
-  Add18 AddX(.A(OPM), .B(OPY), .Cin(CinX), .S(ResX), .Cout(CoutX));
-  Register_InitX RegX(.clk(clk), .rst(rst), .en(EnX), .D(ResX), .Q(X));  // EN à contrôler !
+//  assign EnX = Phase0 or (Phase1 and );
+//  assign EnY = Phase0 or (Phase1 and );
 
-  ConstAdjOrPass AdjX(.A(X), .C(Phase), .X(OPX));
+  mux2_x18 mxX(.sel(Phase1), .if0({1'b0, Message_in}), .if1(X), .res(OPM));
+  ConstAdjOrPass AdjY(.A(Y), .C(Phase1), .X(OPY));
+  Add18 AddX(.A(OPM), .B(OPY), .Cin(CinX), .S(ResX), .Cout(CoutX));
+  Register_InitX RegX(.clk(clk), .rst(rst), .en(EnX), .D(ResX), .Q(X));
+
+  ConstAdjOrPass AdjX(.A(X), .C(Phase1), .X(OPX));
   Add18 AddY(.A(OPX), .B(Y), .Cin(CinY), .S(ResY), .Cout(CoutY));
-  Register_InitX RegY(.clk(clk), .rst(rst), .en(EnY), .D(ResY), .Q(Y));  // EN à contrôler !
+  Register_InitX RegY(.clk(clk), .rst(rst), .en(EnY), .D(ResY), .Q(Y));
 endmodule
 
 ////////////////////////////////////////////////////////////////////
