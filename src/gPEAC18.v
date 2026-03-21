@@ -26,7 +26,7 @@ module Compare_modulus(
   (* keep *) sg13g2_or3_1  L2o3_3(.X(t5), .A(t3),    .B(A[ 8]), .C(A[ 7]));
   (* keep *) sg13g2_or3_1  L2o3_4(.X(t6), .A(t4),    .B(A[ 5]), .C(A[ 4]));
   // 3rd layer
-  (* keep *) sg13g2_a21o_2 L3ao_1(.X(t7), .A1(t4),   .A2(A[6]), .B1(t3));
+  (* keep *) sg13g2_a21o_2 L3ao_1(.X(t7), .A1(t4),   .A2(A[6]), .B1(t5));
   // Last stage
   (* keep *) sg13g2_and3_1 L4a3_3(.X( X), .A(t1),    .B(t2),    .C(t7));
 
