@@ -179,7 +179,7 @@ module gPEAC18_descrambler(
   wire CinA, CinB, CoutA, CoutB, EnA, EnB, EnT;
 
   mux2_x18 mxX(.sel(Phase), .if0(Scrambled_in), .if1(A), .res(OPM));
-  ConstModOrNeg(.A(B), .C(Phase), .Y(OPB));
+  ConstModOrNeg cmon(.A(B), .C(Phase), .Y(OPB));
   Add18 AddA(.A(OPM), .B(OPB), .Cin(CinA), .S(ResA), .Cout(CoutA));
   dffen_x18 RegA(.clk(clk), .rst(rst), .en(EnA), .D(ResA), .Q(A));  // EN à contrôler !
  
