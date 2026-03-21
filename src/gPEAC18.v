@@ -115,11 +115,11 @@ endmodule
 module Add18(
     input  wire [17:0] A,
     input  wire [17:0] B,
-    input  wire        Cin
+    input  wire        Cin,
     output wire [17:0] S
     output wire        Cout
   // carry out missing ?
 );
   wire dummy;
-  assign { Cout, S, dummy } = { 1'b0, A, 1'b1 } + { 1'b0, B, Cin};
+  assign { Cout, S, dummy } = { 1'b0, A, 1'b1 } + { 1'b0, B, Cin};
 endmodule
