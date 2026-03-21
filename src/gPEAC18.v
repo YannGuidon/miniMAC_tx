@@ -7,16 +7,13 @@
 
 /* This module compares a 18-bit number to the modulus.
    Compare a bitvector with the constant 258114 = 0x3F042 = 111111000001000010
-   Any number equal or above raises X
-*/
-
+   Any number equal or above raises X */
 module Compare_modulus(
     input wire [17:0] A,
     output wire X
 );
   wire t1, t2, t3, t4, t5, t6, t7, _unused;
   assign _unused = A[0]; // The LSB has no effect.
-
   // first layer
   (* keep *) sg13g2_and3_1 L1a3_1(.X(t1), .A(A[17]), .B(A[16]), .C(A[15]));
   (* keep *) sg13g2_and3_1 L1a3_2(.X(t2), .A(A[14]), .B(A[13]), .C(A[12]));
@@ -29,21 +26,36 @@ module Compare_modulus(
   (* keep *) sg13g2_a21o_2 L3ao_1(.X(t7), .A1(t6),   .A2(A[6]), .B1(t5));
   // Last stage
   (* keep *) sg13g2_and3_1 L4a3_3(.X( X), .A(t1),    .B(t2),    .C(t7));
-
 endmodule
 
-/*
-module Inverters_x4 (
-    input  wire [3:0] A,
-    output wire [3:0] Y);
-  (* keep *) sg13g2_inv_4  Amp0(.Y(Y[0]), .A(A[0]));
-  (* keep *) sg13g2_inv_4  Amp1(.Y(Y[1]), .A(A[1]));
-  (* keep *) sg13g2_inv_4  Amp2(.Y(Y[2]), .A(A[2]));
-  (* keep *) sg13g2_inv_4  Amp3(.Y(Y[3]), .A(A[3]));
-endmodule
+/* modules.v already defines the registers A, B, X, Y & T
+dffen_x18(
+  input  wire clk,
+  input  wire rst,
+  input  wire en,
+  input  wire [17:0] D,
+  output wire [17:0] Q
+);
 */
 
-module ConstOrPass(
+/*
+    modulus: std_ulogic_vector(17 downto 0) := "111111000001000010"; -- 258114; 
+    adjust : std_ulogic_vector(17 downto 0) := "000000111110111110"; -- 4030 = 262144 - modulus;
+*/
+
+//  INIT_X : std_ulogic_vector(17 downto 0) := "101101101110110111"; -- 187319
+module ConstX_OrPass(
+    input  wire [17:0] A,
+    input  wire C,
+    output wire [17:0] X  
+);
+//  module sg13g2_or2_1 (.X(X[]), .A(A[]), .B(C));
+  assign X = A;
+
+endmodule
+
+//  INIT_Y : std_ulogic_vector(17 downto 0) := "011011010101101101"  -- 111981
+module ConstY_OrPass(
     input  wire [17:0] A,
     input  wire C,
     output wire [17:0] X  
@@ -53,13 +65,26 @@ module ConstOrPass(
 endmodule
 
 
+module ConstOrNeg(
+    input  wire [17:0] A,
+    input  wire C,
+    output wire [17:0] X  
+);
+  assign X = ~A;
+
+endmodule
+
+
 /* a 18-bit adder, I have no mapped/optimised version available (yet)
    and I have no time left for such detail */
 module Add18(
     input  wire [17:0] A,
     input  wire [17:0] B,
+    input  wire        Cin
     output wire [17:0] S
+    output wire        Cout
   // carry out missing ?
 );
-  assign S = A + B;
+  wire dummy;
+  assign { Cout, S, dummy } = { 1'b0, A, 1'b1 } + { 1'b0, B, Cin};
 endmodule
