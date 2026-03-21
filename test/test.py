@@ -185,20 +185,20 @@ async def test_project(dut):
     await reset_state(dut)  
     dut._log.info("Starting Comparator Mode => 0")
     for i in range(0, 258114, 2):
+      print(i)
       await input_parameter(i, Decode+Encode, dut)
-      if (i % 2000) == 0:
-        print(i)
+      # if (i % 2000) == 0:
       # the Zero flag should be 0
       #if dut.uio_out.value[3] != 0:
       #  print(int(i) + "invalid")
-      await ClockCycles(dut.clk, 6)
 
+    await ClockCycles(dut.clk, 6)
     dut._log.info("Starting Comparator Mode => 1")
     await reset_state(dut)  
     for i in range(258114, 262144, 2):
+      print(i)
       await input_parameter(i, Decode+Encode, dut)
-      if (i % 1000) == 0:
-        print(i)
+      #if (i % 1000) == 0:
       # the Zero flag should be 1 
       #if dut.uio_out.value[3] != 1:
       #  print(int(i) + "invalid")
