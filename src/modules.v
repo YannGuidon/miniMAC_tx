@@ -229,7 +229,6 @@ module or16(
   output wire        Y
 );
   wire [3:0] t;
-
   (* keep *) sg13g2_nor4_1 nor0(.Y(t[0]), .A(A[ 0]), .B(A[ 1]), .C(A[ 2]), .D(A[ 3]));
   (* keep *) sg13g2_nor4_1 nor1(.Y(t[1]), .A(A[ 4]), .B(A[ 5]), .C(A[ 6]), .D(A[ 7]));
   (* keep *) sg13g2_nor4_1 nor2(.Y(t[2]), .A(A[ 8]), .B(A[ 9]), .C(A[10]), .D(A[11]));
@@ -242,7 +241,6 @@ module nor16(
   output wire        X
 );
   wire [3:0] t;
-
   (* keep *) sg13g2_nor4_1 nor0(.Y(t[0]), .A(A[ 0]), .B(A[ 1]), .C(A[ 2]), .D(A[ 3]));
   (* keep *) sg13g2_nor4_1 nor1(.Y(t[1]), .A(A[ 4]), .B(A[ 5]), .C(A[ 6]), .D(A[ 7]));
   (* keep *) sg13g2_nor4_1 nor2(.Y(t[2]), .A(A[ 8]), .B(A[ 9]), .C(A[10]), .D(A[11]));
@@ -250,3 +248,32 @@ module nor16(
   (* keep *) sg13g2_and4_1 and4(.X(X), .A(t[0]), .B(t[1]), .C(t[2]), .D(t[3]));
 endmodule
 
+
+// re-multiplex the 18-bit word
+module output_muxer(
+  input wire [17:0] LastWord,
+  input wire Dout_OK,
+
+  output wire Zero,
+  output wire QEN,
+  output wire [8:0] Dout9
+);
+  wire Zero_value, QEN1;
+  wire [17:0] LastWord;
+  wire [8:0]  LastHalfWord, LastMSB;
+
+  // shift register : Dout_OK => QEN1 => QEN
+  (* keep *) sg13g2_dfrbpq_1 DFF_QEN1(.Q(QEN1), .D(Dout_OK), .RESET_B(INT_RESET), .CLK(clk));
+  (* keep *) sg13g2_dfrbpq_1 DFF_QEN2(.Q(QEN ), .D(QEN1),    .RESET_B(INT_RESET), .CLK(clk));
+
+  // Zero flag is 1 when all the 16 data bits are 0:
+  nor16 zo16(.A({LastWord[16:9], LastWord[7:0]}), .X(Zero_value));   // does not NOR the C/D bit!
+  (* keep *) sg13g2_dfrbpq_1 DFF_sero(.Q(Zero), .D(Zero_value), .RESET_B(INT_RESET), .CLK(clk));  // Latch & output the "sum"
+
+  // Multiplex the last half words:
+  dff_x9 dffMSB(.D(LastWord[17:9]), .Q(LastMSB), .clk(clk), .rst(INT_RESET)); // save the MSB for the next cycle
+  a22o_fo_x9 sel2(.A1(QEN1), .A2(LastWord[8:0]),  // LSB first
+                  .B1(QEN ), .B2(LastMSB),        // then MSB
+                  .Y(LastHalfWord));              // otherwise 0
+  dff_x9 dffOut(.D(LastHalfWord), .Q(Dout9), .clk(clk), .rst(INT_RESET));  // Latch & output the data halfword
+endmodule
