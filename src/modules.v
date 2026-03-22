@@ -316,7 +316,7 @@ module Encode_Hamming_early(
 );
   wire [17:0] HammerEnc_operand, HammerEnc_result, HammerEnc_delayed;
   Hammer18x4 HamEnc(.I(HammIn), .O(HammerEnc_result));
-  dffen_x18 delayEnc(.clk(clk), .rst(INT_RESET), .D(HammerEnc_result), .Q(HammerEnc_delayed), .en(HammEn));
+  dffen_x18 delayEnc(.clk(clk), .rst(rst), .D(HammerEnc_result), .Q(HammerEnc_delayed), .en(HammEn));
   xor2_x18 mixEnc(.A(HammIn), .B(HammerEnc_delayed), .X(HammOut) );
 endmodule
 
@@ -330,5 +330,5 @@ module Decode_Hamming_early(
   wire [17:0] HammerDec_result, HammerDec_delayed;
   xor2_x18 mixDec(.A(HammIn), .B(HammerDec_delayed), .X(HammOut) );
   Hammer18x4 HamDec(.I(HammOut), .O(HammerDec_result));
-  dffen_x18 delayDec(.clk(clk), .rst(INT_RESET), .D(HammerDec_result), .Q(HammerDec_delayed), .en(DecResult_En));
+  dffen_x18 delayDec(.clk(clk), .rst(rst), .D(HammerDec_result), .Q(HammerDec_delayed), .en(DecResult_En));
 endmodule
