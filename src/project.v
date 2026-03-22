@@ -60,10 +60,31 @@ module tt_um_miniMAC (
     .clk(clk), .rst(INT_RESET), .DEN(DEN), .Din9(Din9),
     .Din_OK(Din_OK), .FirstWord(FirstWord));
 
-  // short circuit
-  assign LastWord = FirstWord;
+  Encode_Hamming_early Henc(
+      .clk(clk), .rst(INT_RESET), .HammEn(Din_OK),
+      .HammIn(FirstWord), .HammOut(LastWord) );
   assign Dout_OK = Din_OK;
   
+/*
+Short circuit config :
+  assign LastWord = FirstWord;
+  assign Dout_OK = Din_OK;
+
+Routing stats:
+  Utilisation (%) 10.858 %
+  Wire length (um)  8629
+Cell usage by Category:
+  Fill	decap fill	1993
+  Flip Flops	dfrbpq dfrbp sdfrbpq	52
+  Misc	dlygate4sd3	52
+  Buffer	buf	45
+  Inverter	inv	14
+  Combo Logic	a22oi	9
+  NOR	nor4	4
+  AND and2 and4	2
+178 total cells (excluding fill and tap cells)
+*/
+
   output_muxer mxr(
     .clk(clk), .rst(INT_RESET), .Dout_OK(Dout_OK), .LastWord(LastWord),
     .Zero(Zero), .QEN(QEN), .Dout9(Dout9));
