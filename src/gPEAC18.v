@@ -90,8 +90,10 @@ module Add18(
     output wire [17:0] S,
     output wire        Cout
 );
-  wire dummy;
-  assign { Cout, S, dummy } = { 1'b0, A, 1'b1 } + { 1'b0, B, Cin};
+  /* verilator lint_off UNUSEDSIGNAL */
+  wire _unused;
+  /* verilator lint_on UNUSEDSIGNAL */
+  assign { Cout, S, _unused } = { 1'b0, A, 1'b1 } + { 1'b0, B, Cin};
 endmodule
 
 module Register_InitX(
