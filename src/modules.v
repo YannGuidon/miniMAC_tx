@@ -8,10 +8,10 @@
 
 
 module mux2_x18(
-  input  wire sel,
-  input  wire [17:0] if0,
-  input  wire [17:0] if1,
-  output wire [17:0] res
+    input  wire sel,
+    input  wire [17:0] if0,
+    input  wire [17:0] if1,
+    output wire [17:0] res
 );
   (* keep *) sg13g2_mux2_2 mux_00(.A0(if0[ 0]), .A1(if1[ 0]), .S(sel), .X(res[ 0]));
   (* keep *) sg13g2_mux2_2 mux_01(.A0(if0[ 1]), .A1(if1[ 1]), .S(sel), .X(res[ 1]));
@@ -34,9 +34,9 @@ module mux2_x18(
 endmodule
 
 module xor2_x18(
-  input  wire [17:0] A,
-  input  wire [17:0] B,
-  output wire [17:0] X
+    input  wire [17:0] A,
+    input  wire [17:0] B,
+    output wire [17:0] X
 );
   (* keep *) sg13g2_xor2_1 xo00(.X(X[ 0]), .A(A[ 0]), .B(B[ 0]));
   (* keep *) sg13g2_xor2_1 xo01(.X(X[ 1]), .A(A[ 1]), .B(B[ 1]));
@@ -59,11 +59,11 @@ module xor2_x18(
 endmodule
 
 module dffen_x18(
-  input  wire clk,
-  input  wire rst,
-  input  wire en,
-  input  wire [17:0] D,
-  output wire [17:0] Q
+    input  wire clk,
+    input  wire rst,
+    input  wire en,
+    input  wire [17:0] D,
+    output wire [17:0] Q
 );
   wire [17:0] fb;
   assign Q = fb;
@@ -89,12 +89,12 @@ module dffen_x18(
 endmodule
 
 module dffen_rs_x18(
-  input  wire clk,
-  input  wire [17:0] rst,
-  input  wire [17:0] set,
-  input  wire en,
-  input  wire [17:0] D,
-  output wire [17:0] Q
+    input  wire clk,
+    input  wire [17:0] rst,
+    input  wire [17:0] set,
+    input  wire en,
+    input  wire [17:0] D,
+    output wire [17:0] Q
 );
   wire [17:0] fb;
   wire [17:0] U;
@@ -124,10 +124,10 @@ endmodule
 
 
 module dff_x9(
-  input  wire clk,
-  input  wire rst,
-  input  wire [8:0] D,
-  output wire [8:0] Q
+    input  wire clk,
+    input  wire rst,
+    input  wire [8:0] D,
+    output wire [8:0] Q
 );
   (* keep *) sg13g2_dfrbpq_1 dff0(.Q(Q[0]), .D(D[0]), .RESET_B(rst), .CLK(clk));
   (* keep *) sg13g2_dfrbpq_1 dff1(.Q(Q[1]), .D(D[1]), .RESET_B(rst), .CLK(clk));
@@ -141,10 +141,10 @@ module dff_x9(
 endmodule
 
 module dffn_x9(
-  input  wire clk,
-  input  wire rst,
-  input  wire [8:0] D,
-  output wire [8:0] QN
+    input  wire clk,
+    input  wire rst,
+    input  wire [8:0] D,
+    output wire [8:0] QN
 );
   /* verilator lint_off PINCONNECTEMPTY */
   (* keep *) sg13g2_dfrbp_2 dffn0(.Q(), .Q_N(QN[0]), .D(D[0]), .RESET_B(rst), .CLK(clk));
@@ -160,11 +160,11 @@ module dffn_x9(
 endmodule
 
 module a22oi_x9(
-  input  wire [8:0] A1,
-  input  wire [8:0] A2,
-  input  wire [8:0] B1,
-  input  wire [8:0] B2,
-  output wire [8:0] Y
+    input  wire [8:0] A1,
+    input  wire [8:0] A2,
+    input  wire [8:0] B1,
+    input  wire [8:0] B2,
+    output wire [8:0] Y
 );
   (* keep *) sg13g2_a22oi_1 a22oi_0(.A1(A1[0]), .A2(A2[0]), .B1(B1[0]), .B2(B2[0]), .Y(Y[0]));
   (* keep *) sg13g2_a22oi_1 a22oi_1(.A1(A1[1]), .A2(A2[1]), .B1(B1[1]), .B2(B2[1]), .Y(Y[1]));
@@ -178,11 +178,11 @@ module a22oi_x9(
 endmodule
 
 module a22oi_fo_x9(
-  input             A1,
-  input  wire [8:0] A2,
-  input             B1,
-  input  wire [8:0] B2,
-  output wire [8:0] Y
+    input             A1,
+    input  wire [8:0] A2,
+    input             B1,
+    input  wire [8:0] B2,
+    output wire [8:0] Y
 );
   (* keep *) sg13g2_a22oi_1 a22oi_0(.A1(A1), .A2(A2[0]), .B1(B1), .B2(B2[0]), .Y(Y[0]));
   (* keep *) sg13g2_a22oi_1 a22oi_1(.A1(A1), .A2(A2[1]), .B1(B1), .B2(B2[1]), .Y(Y[1]));
@@ -196,11 +196,11 @@ module a22oi_fo_x9(
 endmodule
 
 module a22o_fo_x9(
-  input             A1,
-  input  wire [8:0] A2,
-  input             B1,
-  input  wire [8:0] B2,
-  output wire [8:0] Y
+    input             A1,
+    input  wire [8:0] A2,
+    input             B1,
+    input  wire [8:0] B2,
+    output wire [8:0] Y
 );
   wire [8:0] t;
   (* keep *) sg13g2_a22oi_1 a22oi_0(.A1(A1), .A2(A2[0]), .B1(B1), .B2(B2[0]), .Y(t[0]));
@@ -225,8 +225,8 @@ module a22o_fo_x9(
 endmodule
 
 module or16(
-  input  wire [15:0] A,
-  output wire        Y
+    input  wire [15:0] A,
+    output wire        Y
 );
   wire [3:0] t;
   (* keep *) sg13g2_nor4_1 nor0(.Y(t[0]), .A(A[ 0]), .B(A[ 1]), .C(A[ 2]), .D(A[ 3]));
@@ -237,8 +237,8 @@ module or16(
 endmodule
 
 module nor16(
-  input  wire [15:0] A,
-  output wire        X
+    input  wire [15:0] A,
+    output wire        X
 );
   wire [3:0] t;
   (* keep *) sg13g2_nor4_1 nor0(.Y(t[0]), .A(A[ 0]), .B(A[ 1]), .C(A[ 2]), .D(A[ 3]));
@@ -250,13 +250,13 @@ endmodule
 
 // de-multiplex the 18-bit word
 module input_demux(
-  input wire clk,
-  input wire rst,
-  input wire DEN,
-  input wire [8:0] Din9,
+    input wire clk,
+    input wire rst,
+    input wire DEN,
+    input wire [8:0] Din9,
 
-  output wire Din_OK,
-  output wire [17:0] FirstWord
+    output wire Din_OK,
+    output wire [17:0] FirstWord
 );
   wire Den_In0, Den_In1, valid;
 
@@ -279,14 +279,14 @@ endmodule
   
 // re-multiplex the 18-bit word
 module output_muxer(
-  input wire clk,
-  input wire rst,
-  input wire Dout_OK,
-  input wire [17:0] LastWord,
+    input wire clk,
+    input wire rst,
+    input wire Dout_OK,
+    input wire [17:0] LastWord,
 
-  output wire Zero,
-  output wire QEN,
-  output wire [8:0] Dout9
+    output wire Zero,
+    output wire QEN,
+    output wire [8:0] Dout9
 );
   wire Zero_value, QEN1;
   wire [8:0]  LastHalfWord, LastMSB;
@@ -305,4 +305,30 @@ module output_muxer(
                   .B1(QEN ), .B2(LastMSB),        // then MSB
                   .Y(LastHalfWord));              // otherwise 0
   dff_x9 dffOut(.D(LastHalfWord), .Q(Dout9), .clk(clk), .rst(rst));  // Latch & output the data halfword
+endmodule
+
+module Encode_Hamming_early(
+    input wire clk,
+    input wire rst,
+    input wire HammEn,
+    input wire [17:0] HammIn,
+    input wire [17:0] HammOut  
+);
+  wire [17:0] HammerEnc_operand, HammerEnc_result, HammerEnc_delayed;
+  Hammer18x4 HamEnc(.I(HammIn), .O(HammerEnc_result));
+  dffen_x18 delayEnc(.clk(clk), .rst(INT_RESET), .D(HammerEnc_result), .Q(HammerEnc_delayed), .en(HammEn));
+  xor2_x18 mixEnc(.A(HammIn), .B(HammerEnc_delayed), .X(HammOut) );
+endmodule
+
+module Decode_Hamming_early(
+    input wire clk,
+    input wire rst,
+    input wire HammEn,
+    input wire [17:0] HammIn,
+    input wire [17:0] HammOut  
+);
+  wire [17:0] HammerDec_result, HammerDec_delayed;
+  xor2_x18 mixDec(.A(HammIn), .B(HammerDec_delayed), .X(HammOut) );
+  Hammer18x4 HamDec(.I(HammOut), .O(HammerDec_result));
+  dffen_x18 delayDec(.clk(clk), .rst(INT_RESET), .D(HammerDec_result), .Q(HammerDec_delayed), .en(DecResult_En));
 endmodule
