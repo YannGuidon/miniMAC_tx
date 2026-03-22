@@ -314,7 +314,7 @@ module Encode_Hamming_early(
     input wire [17:0] HammIn,
     output wire [17:0] HammOut  
 );
-  wire [17:0] HammerEnc_operand, HammerEnc_result, HammerEnc_delayed;
+  wire [17:0] HammerEnc_result, HammerEnc_delayed;
   Hammer18x4 HamEnc(.I(HammIn), .O(HammerEnc_result));
   dffen_x18 delayEnc(.clk(clk), .rst(rst), .D(HammerEnc_result), .Q(HammerEnc_delayed), .en(HammEn));
   xor2_x18 mixEnc(.A(HammIn), .B(HammerEnc_delayed), .X(HammOut) );
