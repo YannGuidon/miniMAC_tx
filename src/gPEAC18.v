@@ -122,7 +122,7 @@ module Register_InitY(
 endmodule
 
 ////////////////////////////////////////////////////////////////////
-/*
+
 module gPEAC18_scrambler(
   input  wire clk,
   input  wire rst,
@@ -131,35 +131,36 @@ module gPEAC18_scrambler(
   input  wire [16:0] Message_in, // C/D bit as Message_in[8]
   output wire [17:0] X // 0 < data < modulus
 );
-
   wire [17:0] Y;
   wire [17:0] OPM;
   wire [17:0] OPX;
   wire [17:0] OPY;
   wire [17:0] ResX;
   wire [17:0] ResY;
-  wire CX, CY, newCX, newCY, CinX, CinY, CoutX, CoutY, EnX, EnY;
+  wire CX, CY, newCX, newCY, CinX, CinY, CoutX, CoutY, EnX, EnY, phases;
 
-
-  (* keep *) sg13g2_or2_1  OrX(.X(EnX), .A(Phase0), .B(CoutX)); //  assign EnX = Phase0 or CoutX
-  (* keep *) sg13g2_or2_1  OrY(.X(EnY), .A(Phase0), .B(CoutY)); //  assign EnY = Phase0 or CoutY
-
-  (* keep *) sg13g2_and2_1  AndX(.X(CinX), .A(Phase0), .B(CX));  // CinX = CX and Phase0;
-  (* keep *) sg13g2_and2_1  AndY(.X(CinY), .A(Phase0), .B(CY));  // CinY = CY and Phase0;
-// X path:
+  (* keep *) sg13g2_or2_1  OrPh(.X(phases), .A(Phase0), .B(Phase1));          //  phases = Phase0 or Phase1
+  
+  // X path:
   mux2_x18 mxX(.sel(Phase1), .if0({1'b0, Message_in}), .if1(X), .res(OPM));
   ConstAdjOrPass AdjY(.A(Y), .C(Phase1), .X(OPY));
+  (* keep *) sg13g2_and2_1  AndX(.X(CinX), .A(Phase0), .B(CX));               // CinX = CX and Phase0;  ==> could be merged in the LSB of the adder !
   Add18 AddX(.A(OPM), .B(OPY), .Cin(CinX), .S(ResX), .Cout(CoutX));
+  (* keep *) sg13g2_a21o_2 nCX(.X(newCX), .A1(CX), .A2(Phase1), .B1(CoutX));  //  newCX = CoutX or (CX and Phase1);  ==> A21O
+  (* keep *) sg13g2_or2_1  OrX(.X(EnX), .A(Phase0), .B(newCX));               //  EnX = Phase0 or newCX
   Register_InitX RegX(.clk(clk), .rst(rst), .en(EnX), .D(ResX), .Q(X));
-  (* keep *) sg13g2_sdfrbpq_1 dffX(.Q(CX), .D(CX), .SCD(newCX), .SCE(   ), .RESET_B(rst), .CLK(clk));
+  (* keep *) sg13g2_sdfrbpq_1 dffX(.Q(CX), .D(CX), .SCD(newCX), .SCE(phases), .RESET_B(rst), .CLK(clk));
 
-// Y path:
+  // Y path:
   ConstAdjOrPass AdjX(.A(X), .C(Phase1), .X(OPX));
+  (* keep *) sg13g2_and2_1  AndY(.X(CinY), .A(Phase0), .B(CY));               // CinY = CY and Phase0;
   Add18 AddY(.A(OPX), .B(Y), .Cin(CinY), .S(ResY), .Cout(CoutY));
+  (* keep *) sg13g2_a21o_2 nCY(.X(newCY), .A1(CY), .A2(Phase1), .B1(CoutY));  //  newCY = CoutY or (CY and Phase1);  ==> A21O
+  (* keep *) sg13g2_or2_1  OrY(.X(EnY), .A(Phase0), .B(newCY));               //  EnY = Phase0 or newCY
   Register_InitX RegY(.clk(clk), .rst(rst), .en(EnY), .D(ResY), .Q(Y));
-  (* keep *) sg13g2_sdfrbpq_1 dffY(.Q(CY), .D(CY), .SCD(newCY), .SCE(  ), .RESET_B(rst), .CLK(clk));
+  (* keep *) sg13g2_sdfrbpq_1 dffY(.Q(CY), .D(CY), .SCD(newCY), .SCE(phases), .RESET_B(rst), .CLK(clk));
 endmodule
-*/
+
 ////////////////////////////////////////////////////////////////////
 
 module gPEAC18_descrambler(
