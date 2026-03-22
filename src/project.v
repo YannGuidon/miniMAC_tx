@@ -22,7 +22,7 @@ module tt_um_miniMAC (
   assign uio_oe  = 8'b00001111; // port uio : 4 LSB go out
 
   // aliasing
-  wire QEN, CLK_out, Zero, /* Encode, Decode, */ DEN;
+  wire QEN, CLK_out, Zero, Encode, Decode, DEN;
   wire [8:0] Din9, Dout9;
   assign uo_out     = Dout9[7:0];
   assign Din9[7:0]  = ui_in;
@@ -35,12 +35,12 @@ module tt_um_miniMAC (
   assign Encode     = uio_in[5];
   assign Decode     = uio_in[6];
   assign Din9[8]    = uio_in[7];
-  
+
   // All output pins must be assigned. If not used, assign to 0.
   assign uio_out[7:4] = 4'b0000;
 
   // List all unused inputs to prevent warnings
-  wire _unused = &{uio_in[0], uio_in[1], uio_in[2], uio_in[3], 1'b0};
+  wire _unused = &{uio_in[0], uio_in[1], uio_in[2], uio_in[3], Encode, Decode, 1'b0};
 
 /////////////////////////////////////////////////////////////////////////////
 
@@ -67,7 +67,6 @@ module tt_um_miniMAC (
   output_muxer mxr(
     .clk(clk), .rst(INT_RESET), .Dout_OK(Dout_OK), .LastWord(LastWord),
     .Zero(Zero), .QEN(QEN), .Dout9(Dout9));
-
 endmodule
 
 
