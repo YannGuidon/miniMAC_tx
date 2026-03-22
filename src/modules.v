@@ -256,7 +256,7 @@ module input_demux(
   input wire [8:0] Din9,
 
   output wire Din_OK,
-  output wire [17:0] FirstWord;
+  output wire [17:0] FirstWord
 );
   wire Den_In0, Den_In1, valid;
 
