@@ -40,7 +40,7 @@ module tt_um_miniMAC (
   assign uio_out[7:4] = 4'b0000;
 
   // List all unused inputs to prevent warnings
-  wire _unused = &{uio_in[0], uio_in[1], uio_in[2], uio_in[3], Encode, Decode, 1'b0};
+  wire _unused = &{uio_in[0], uio_in[1], uio_in[2], uio_in[3], 1'b0};
 
 /////////////////////////////////////////////////////////////////////////////
 
@@ -62,24 +62,25 @@ module tt_um_miniMAC (
 
 
   // gPEAC then Hammer encoder:
-  wire gPEAC_phase1;
-    wire [17:0] scrambled, HammerEnc_result;
+  wire gPEAC_phase1, gPEAC_phase2;
+  wire [17:0] scrambled, HammerEnc_result;
 
   // pipeline : Din_OK---[]---gPEAC_phase1---[]---Dout_OK
   //             \__phase0       \__phase1
-  (* keep *) sg13g2_dfrbpq_1 dff_enc1(.Q(gPEAC_phase1),  .D(Din_OK), .RESET_B(INT_RESET), .CLK(clk));
-  (* keep *) sg13g2_dfrbpq_1 dff_enc2(.Q(Dout_OK), .D(gPEAC_phase1), .RESET_B(INT_RESET), .CLK(clk));
+  (* keep *) sg13g2_dfrbpq_1 dff_enc1(.Q(gPEAC_phase1), .D(Din_OK      ), .RESET_B(INT_RESET), .CLK(clk));
+  (* keep *) sg13g2_dfrbpq_1 dff_enc2(.Q(gPEAC_phase2), .D(gPEAC_phase1), .RESET_B(INT_RESET), .CLK(clk));
 
   gPEAC18_scrambler emPEAC(
-     .clk(clk), .rst(INT_RESET), .Phase0(Din_OK), .Phase1(gPEAC_phase1),
-     .Message_in(FirstWord[16:0]), .X(scrambled));
+      .clk(clk), .rst(INT_RESET), .Phase0(Din_OK), .Phase1(gPEAC_phase1),
+      .Message_in(FirstWord[16:0]), .X(scrambled));
 
   Encode_Hamming_early Henc(
-      .clk(clk), .rst(INT_RESET), .HammEn(Dout_OK),
+      .clk(clk), .rst(INT_RESET), .HammEn(gPEAC_phase2),
       .HammIn(scrambled), .HammOut(HammerEnc_result) );
 
-  // prevent a lot of warnings due to narrower input
+  // prevent a lot of warnings caused by gPEAC18_scrambler's narrower input ( /!\ Encode==Decode /!\ )
   mux2_x18 selEnc( .sel(Encode), .if0(FirstWord), .if1(HammerEnc_result), .res(LastWord) );
+  (* keep *) sg13g2_mux2_2 sel_pulse(.A0(Din_OK), .A1(gPEAC_phase2), .S(Decode), .X(Dout_OK));
 
 
   output_muxer mxr(
