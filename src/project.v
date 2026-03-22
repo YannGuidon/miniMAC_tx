@@ -61,7 +61,50 @@ module tt_um_miniMAC (
     .Din_OK(Din_OK), .FirstWord(FirstWord));
 
 
-  // gPEAC then Hammer encoder:
+  // gPEAC encoder alone:
+  wire gPEAC_phase1, gPEAC_phase2;
+  wire [17:0] scrambled, HammerEnc_result;
+
+  // pipeline : Din_OK---[]---gPEAC_phase1---[]---Dout_OK
+  //             \__phase0       \__phase1
+  (* keep *) sg13g2_dfrbpq_1 dff_enc1(.Q(gPEAC_phase1), .D(Din_OK      ), .RESET_B(INT_RESET), .CLK(clk));
+  (* keep *) sg13g2_dfrbpq_1 dff_enc2(.Q(gPEAC_phase2), .D(gPEAC_phase1), .RESET_B(INT_RESET), .CLK(clk));
+
+  gPEAC18_scrambler emPEAC(
+      .clk(clk), .rst(INT_RESET), .Phase0(Din_OK), .Phase1(gPEAC_phase1),
+      .Message_in(FirstWord[16:0]), .X(scrambled));
+
+  // prevent a lot of warnings caused by gPEAC18_scrambler's narrower input ( /!\ Encode==Decode /!\ )
+  mux2_x18 selEnc( .sel(Encode), .if0(FirstWord), .if1(scrambled), .res(LastWord) );
+  (* keep *) sg13g2_mux2_2 sel_pulse(.A0(Din_OK), .A1(gPEAC_phase2), .S(Decode), .X(Dout_OK));
+
+
+  output_muxer mxr(
+    .clk(clk), .rst(INT_RESET), .Dout_OK(Dout_OK), .LastWord(LastWord),
+    .Zero(Zero), .QEN(QEN), .Dout9(Dout9));
+endmodule
+
+
+/*
+Routing stats:
+  Utilisation  40.186 %
+  Wire length  44427 µm
+Cell usage by Category
+  Fill	decap fill	1270
+  OR	xor2 or2	127
+  NOR	nor2 nor2b xnor2 nor3 nor4	117
+  Flip Flops	dfrbpq sdfrbpq dfrbp sdfbbp	110
+  Misc	dlygate4sd3	109
+  Buffer	buf	95
+  Combo Logic	o21ai a21oi a221oi a22oi a21o	62
+  Multiplexer	mux2	37
+  NAND	nand2 nand2b nand3b nand3	29
+  AND	and2 and4	16
+  Inverter	inv	12
+714 total
+
+
+  // gPEAC encoder then Hammer encoder:
   wire gPEAC_phase1, gPEAC_phase2;
   wire [17:0] scrambled, HammerEnc_result;
 
@@ -81,12 +124,8 @@ module tt_um_miniMAC (
   // prevent a lot of warnings caused by gPEAC18_scrambler's narrower input ( /!\ Encode==Decode /!\ )
   mux2_x18 selEnc( .sel(Encode), .if0(FirstWord), .if1(HammerEnc_result), .res(LastWord) );
   (* keep *) sg13g2_mux2_2 sel_pulse(.A0(Din_OK), .A1(gPEAC_phase2), .S(Decode), .X(Dout_OK));
+*/
 
-
-  output_muxer mxr(
-    .clk(clk), .rst(INT_RESET), .Dout_OK(Dout_OK), .LastWord(LastWord),
-    .Zero(Zero), .QEN(QEN), .Dout9(Dout9));
-endmodule
 
 
 /*
