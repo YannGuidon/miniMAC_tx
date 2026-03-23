@@ -61,11 +61,8 @@ module tt_um_miniMAC (
     .Din_OK(Din_OK), .FirstWord(FirstWord));
 
 
-
-  // gPEAC encoder and decoder sans Hammer:
-
   // Scrambler
-  wire [17:0] scrambled;
+  wire [17:0] scrambled, HammerEnc_result;
   wire emPEAC_phase1, emPEAC_phase2;
   // pipeline : Din_OK---[]---emPEAC_phase1---[]---emPEAC_phase2
   //              \__phase0       \__phase1
@@ -75,10 +72,13 @@ module tt_um_miniMAC (
       .clk(clk), .rst(INT_RESET), .Phase0(Din_OK), .Phase1(emPEAC_phase1),
       .Message_in(FirstWord[16:0]), .X(scrambled));
 
+  Encode_Hamming_early Henc(
+      .clk(clk), .rst(INT_RESET), .HammEn(gPEAC_phase2),
+      .HammIn(scrambled), .HammOut(HammerEnc_result) );
+
 
   // deScrambler
-  wire [17:0] scrambled_in;
-  wire [17:0] descrambled;
+  wire [17:0] scrambled_in, HammerDec_result, descrambled;
   wire dePEAC_phase0, dePEAC_phase1, dePEAC_phase2;
   // pipeline : Din_OK/emPEAC_phase2=>dePEAC_phase0---[]---dePEAC_phase1---[]---dePEAC_phase2
   //                                      \__phase0            \__phase1
@@ -87,20 +87,44 @@ module tt_um_miniMAC (
   (* keep *) sg13g2_dfrbpq_1 dff_dec1(.Q(dePEAC_phase1), .D(dePEAC_phase0), .RESET_B(INT_RESET), .CLK(clk));
   (* keep *) sg13g2_dfrbpq_1 dff_dec2(.Q(dePEAC_phase2), .D(dePEAC_phase1), .RESET_B(INT_RESET), .CLK(clk));
 
+  Decode_Hamming_early Hdec(
+      .clk(clk), .rst(INT_RESET), .HammEn(dePEAC_phase0),
+      .HammIn(scrambled_in), .HammOut(HammerDec_result) );
+  
   gPEAC18_descrambler dePEAC(
       .clk(clk), .rst(INT_RESET), .Phase0(dePEAC_phase0), .Phase1(dePEAC_phase1),
-      .Scrambled_in(scrambled_in), .Message_out(descrambled));   // C/D bit as Message_out[8], [17] is error
+      .Scrambled_in(HammerDec_result), .Message_out(descrambled));   // C/D bit as Message_out[8], [17] is error
+
+
 
   // Select the output
-  mux2_x18 selDest( .sel(Encode), .if0(descrambled), .if1(scrambled), .res(LastWord) );
+  mux2_x18 selDest( .sel(Encode), .if0(descrambled), .if1(HammerEnc_result), .res(LastWord) );
   (* keep *) sg13g2_mux2_2 selDestpulse(.S(Encode), .A0(dePEAC_phase2), .A1(emPEAC_phase2), .X(Dout_OK));
-
 
   output_muxer mxr(
     .clk(clk), .rst(INT_RESET), .Dout_OK(Dout_OK), .LastWord(LastWord),
     .Zero(Zero), .QEN(QEN), .Dout9(Dout9));
 endmodule
 
+
+
+/* gPEAC encoder and decoder sans Hammer:
+target: 20ns / 50MHz
+Utilisation 58.247%
+Cell usage by Category
+Fill	decap fill	721
+NOR	xnor2 nor2 nor2b nor3 nor4	227
+Misc	dlygate4sd3	153
+Flip Flops	dfrbpq sdfrbpq sdfbbp sdfrbp dfrbp	151
+Buffer	buf	145
+Combo Logic	a22oi a21oi o21ai a221oi a21o	115
+OR	or2 xor2 or3	89
+Multiplexer	mux2	74
+NAND	nand2 nand2b nand3b nand3	65
+AND	and2 and4 and3	33
+Inverter	inv	25
+1077 total cells
+*/
 
 /*
 Utilisation 32.123% (looks 45%)
