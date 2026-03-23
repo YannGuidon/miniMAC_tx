@@ -63,30 +63,29 @@ module tt_um_miniMAC (
 
 
   // gPEAC encoder and decoder sans Hammer:
-  wire emPEAC_phase1, emPEAC_phase2;
-  wire [17:0] scrambled;
 
   // Scrambler
+  wire [17:0] scrambled;
+  wire emPEAC_phase1, emPEAC_phase2;
   // pipeline : Din_OK---[]---emPEAC_phase1---[]---emPEAC_phase2
   //              \__phase0       \__phase1
   (* keep *) sg13g2_dfrbpq_1 dff_enc1(.Q(emPEAC_phase1), .D(Din_OK      ), .RESET_B(INT_RESET), .CLK(clk));
-  (* keep *) sg13g2_dfrbpq_1 dff_enc2(.Q(emPEAC_phase2), .D(gPEAC_phase1), .RESET_B(INT_RESET), .CLK(clk));
+  (* keep *) sg13g2_dfrbpq_1 dff_enc2(.Q(emPEAC_phase2), .D(emPEAC_phase1), .RESET_B(INT_RESET), .CLK(clk));
   gPEAC18_scrambler emPEAC(
       .clk(clk), .rst(INT_RESET), .Phase0(Din_OK), .Phase1(emPEAC_phase1),
       .Message_in(FirstWord[16:0]), .X(scrambled));
 
 
   // deScrambler
-  // pipeline : Din_OK/emPEAC_phase2=>dePEAC_phase0---[]---dePEAC_phase1---[]---dePEAC_phase2
-  //                                      \__phase0            \__phase1
   wire [17:0] scrambled_in;
   wire [17:0] descrambled;
   wire dePEAC_phase0, dePEAC_phase1, dePEAC_phase2;
-
+  // pipeline : Din_OK/emPEAC_phase2=>dePEAC_phase0---[]---dePEAC_phase1---[]---dePEAC_phase2
+  //                                      \__phase0            \__phase1
   mux2_x18 selDec( .sel(Decode), .if0(scrambled), .if1(FirstWord), .res(scrambled_in) );
   (* keep *) sg13g2_mux2_2 sel_src(.S(Decode), .A0(Din_OK), .A1(emPEAC_phase2), .X(dePEAC_phase0));
-  (* keep *) sg13g2_dfrbpq_1 dff_dec1(.Q(emPEAC_phase1), .D(Din_OK      ), .RESET_B(INT_RESET), .CLK(clk));
-  (* keep *) sg13g2_dfrbpq_1 dff_dec2(.Q(emPEAC_phase2), .D(gPEAC_phase1), .RESET_B(INT_RESET), .CLK(clk));
+  (* keep *) sg13g2_dfrbpq_1 dff_dec1(.Q(dePEAC_phase1), .D(dePEAC_phase0), .RESET_B(INT_RESET), .CLK(clk));
+  (* keep *) sg13g2_dfrbpq_1 dff_dec2(.Q(dePEAC_phase2), .D(dePEAC_phase1), .RESET_B(INT_RESET), .CLK(clk));
 
 
 assign descrambled = scrambled; //////////////////////////////////////////////////////////////////////////////////
