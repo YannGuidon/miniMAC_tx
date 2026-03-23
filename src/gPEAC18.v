@@ -172,7 +172,7 @@ module gPEAC18_descrambler(
   input  wire Phase0,
   input  wire Phase1,
   input  wire [17:0] Scrambled_in, // 0 < data < modulus
-  output wire [17:0] Message_out, // C/D bit as Message_in[8], [17] is error
+  output wire [17:0] Message_out   // C/D bit as Message_in[8], [17] is error
 );
   wire phases;
   (* keep *) sg13g2_or2_1  OrPh(.X(phases), .A(Phase0), .B(Phase1));          //  phases = Phase0 or Phase1
