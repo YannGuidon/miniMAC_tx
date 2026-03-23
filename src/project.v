@@ -89,7 +89,7 @@ module tt_um_miniMAC (
 
 
 assign descrambled = scrambled; //////////////////////////////////////////////////////////////////////////////////
-  
+
 
   // Select the output
   mux2_x18 selDest( .sel(Encode), .if0(descrambled), .if1(scrambled), .res(LastWord) );
