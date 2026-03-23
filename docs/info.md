@@ -75,4 +75,12 @@ Notes :
 
 Custom boards or adapters will be made. I will try to get a pair of chips to connect together, such that I can verify a whole transmission chain.
 
-(to be continued)
+## Next developments
+
+This started as a VHDL to Verilog+IHP PDK port but it will likely grow to a more-featured project.
+
+* I'll try to get 2 boards to test both coder and decoder in a chain, to simulate noisy communications.
+
+* In parallel I try to design a decent PHY, a much more difficult endeavour.
+
+* Logically, the MAC must be completed with a FSM, a buffer and a host interface, likely in the next tapeout so I can play with memory blocks.
