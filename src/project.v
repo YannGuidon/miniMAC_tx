@@ -73,7 +73,7 @@ module tt_um_miniMAC (
       .Message_in(FirstWord[16:0]), .X(scrambled));
 
   Encode_Hamming_early Henc(
-      .clk(clk), .rst(INT_RESET), .HammEn(gPEAC_phase2),
+      .clk(clk), .rst(INT_RESET), .HammEn(emPEAC_phase2),
       .HammIn(scrambled), .HammOut(HammerEnc_result) );
 
 
