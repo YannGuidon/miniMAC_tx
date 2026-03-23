@@ -3,15 +3,15 @@
 
 # Test the Hammer18 & gPEAC scrambler & descrambler in direct, encoding and decoding modes.
 
-Scrambling_direct = False
+#too bad gPEAC doesn't work on time
+Scrambling_direct = True
 Scrambling_loopback = True
 
-# now unused:
-enable_bypass = False
-enable_encode = False
-enable_decode = False
-enable_loopback = False
-enable_compare  = False # just a debug that works for a while, no use for final circuit because it gets wired differenly
+enable_bypass = False  # not wired anymore
+enable_encode = True
+enable_decode = True
+enable_loopback = True
+enable_compare  = False # just a debug that worked for a while, no use for final circuit because it gets wired differenly
 
 import cocotb
 from cocotb.clock import Clock
@@ -191,7 +191,7 @@ async def test_project(dut):
   ######################################################################
   # The following code was used to test the standalone Hammer circuit
   
-  # Test Hammer in direct mode (mode=0)
+  # Test Hammer in direct mode (mode=0)      Bypass is not available anymore
   if enable_bypass == True:
     await reset_state(dut)  
     dut._log.info("Starting Direct Mode")
@@ -235,13 +235,13 @@ async def test_project(dut):
     await reset_state(dut)  
     dut._log.info("Starting Loopback Mode")
     for x in sequence:
-      await input_parameter(x, Decode+Encode, dut)
+      await input_parameter(x, 0, dut)
       t = await output_parameter(dut)
       # print(str(i) + " : " + bin((1 << 20) + (i ^ t)) + "  " + str(t)) # show bit difference
       print(str(x) + " -> " + str(t))
       assert t == x
 
-  # mode=loopback but testing the comparator
+  # mode=loopback but testing the comparator   /!\  Comparator is not exposed anymore   /!\
   if enable_compare == True:
     await ClockCycles(dut.clk, 6)
     dut._log.info("Starting Comparator Mode")
