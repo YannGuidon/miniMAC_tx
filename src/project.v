@@ -61,22 +61,39 @@ module tt_um_miniMAC (
     .Din_OK(Din_OK), .FirstWord(FirstWord));
 
 
-  // gPEAC encoder alone:
-  wire gPEAC_phase1, gPEAC_phase2;
-  wire [17:0] scrambled, HammerEnc_result;
 
-  // pipeline : Din_OK---[]---gPEAC_phase1---[]---Dout_OK
-  //             \__phase0       \__phase1
-  (* keep *) sg13g2_dfrbpq_1 dff_enc1(.Q(gPEAC_phase1), .D(Din_OK      ), .RESET_B(INT_RESET), .CLK(clk));
-  (* keep *) sg13g2_dfrbpq_1 dff_enc2(.Q(gPEAC_phase2), .D(gPEAC_phase1), .RESET_B(INT_RESET), .CLK(clk));
+  // gPEAC encoder and decoder sans Hammer:
+  wire emPEAC_phase1, emPEAC_phase2;
+  wire [17:0] scrambled;
 
+  // Scrambler
+  // pipeline : Din_OK---[]---emPEAC_phase1---[]---emPEAC_phase2
+  //              \__phase0       \__phase1
+  (* keep *) sg13g2_dfrbpq_1 dff_enc1(.Q(emPEAC_phase1), .D(Din_OK      ), .RESET_B(INT_RESET), .CLK(clk));
+  (* keep *) sg13g2_dfrbpq_1 dff_enc2(.Q(emPEAC_phase2), .D(gPEAC_phase1), .RESET_B(INT_RESET), .CLK(clk));
   gPEAC18_scrambler emPEAC(
-      .clk(clk), .rst(INT_RESET), .Phase0(Din_OK), .Phase1(gPEAC_phase1),
+      .clk(clk), .rst(INT_RESET), .Phase0(Din_OK), .Phase1(emPEAC_phase1),
       .Message_in(FirstWord[16:0]), .X(scrambled));
 
-  // prevent a lot of warnings caused by gPEAC18_scrambler's narrower input ( /!\ Encode==Decode /!\ )
-  mux2_x18 selEnc( .sel(Encode), .if0(FirstWord), .if1(scrambled), .res(LastWord) );
-  (* keep *) sg13g2_mux2_2 sel_pulse(.A0(Din_OK), .A1(gPEAC_phase2), .S(Decode), .X(Dout_OK));
+
+  // deScrambler
+  // pipeline : Din_OK/emPEAC_phase2=>dePEAC_phase0---[]---dePEAC_phase1---[]---dePEAC_phase2
+  wire [17:0] scrambled_in;
+  wire [17:0] descrambled;
+  wire dePEAC_phase0, dePEAC_phase1, dePEAC_phase2;
+
+  mux2_x18 selDec( .sel(Decode), .if0(scrambled), .if1(FirstWord), .res(scrambled_in) );
+  (* keep *) sg13g2_mux2_2 sel_src(.S(Decode), .A0(Din_OK), .A1(emPEAC_phase2), .X(dePEAC_phase0));
+  (* keep *) sg13g2_dfrbpq_1 dff_enc1(.Q(emPEAC_phase1), .D(Din_OK      ), .RESET_B(INT_RESET), .CLK(clk));
+  (* keep *) sg13g2_dfrbpq_1 dff_enc2(.Q(emPEAC_phase2), .D(gPEAC_phase1), .RESET_B(INT_RESET), .CLK(clk));
+
+
+assign descrambled = scrambled; //////////////////////////////////////////////////////////////////////////////////
+  
+
+  // Select the output
+  mux2_x18 selDest( .sel(Encode), .if0(descrambled), .if1(scrambled), .res(LastWord) );
+  (* keep *) sg13g2_mux2_2 selDestpulse(.S(Encode), .A0(Din_OK), .A1(emPEAC_phase2), .X(Dout_OK));
 
 
   output_muxer mxr(
@@ -86,8 +103,38 @@ endmodule
 
 
 /*
+Utilisation 32.123% (looks 45%)
+Cell usage by Category
+  Fill	decap fill	1465
+  NOR	nor2 xnor2 nor3 nor2b nor4	117
+  Flip Flops	dfrbpq dfrbp sdfrbpq sdfbbp	92
+  Misc	dlygate4sd3	91
+  Buffer	buf	85
+  Combo Logic	o21ai a221oi a21oi a22oi a21o	62
+  OR	xor2 or2	45
+  Multiplexer	mux2	37
+  NAND	nand2 nand2b nand3b nand3	29
+  AND	and2 and4	16
+  Inverter	inv	13
+587 total cells  
+
+  // gPEAC encoder alone:
+  wire gPEAC_phase1, gPEAC_phase2;
+  wire [17:0] scrambled;
+
+  // pipeline : Din_OK---[]---gPEAC_phase1---[]---Dout_OK
+  //             \__phase0       \__phase1
+  (* keep *) sg13g2_dfrbpq_1 dff_enc1(.Q(gPEAC_phase1), .D(Din_OK      ), .RESET_B(INT_RESET), .CLK(clk));
+  (* keep *) sg13g2_dfrbpq_1 dff_enc2(.Q(gPEAC_phase2), .D(gPEAC_phase1), .RESET_B(INT_RESET), .CLK(clk));
+
+  gPEAC18_scrambler emPEAC(
+      .clk(clk), .rst(INT_RESET), .Phase0(Din_OK), .Phase1(gPEAC_phase1),
+      .Message_in(FirstWord[16:0]), .X(scrambled));
+*/
+
+/*
 Routing stats:
-  Utilisation  40.186 %
+  Utilisation  40.186 % (looks 55-60%)
   Wire length  44427 µm
 Cell usage by Category
   Fill	decap fill	1270
