@@ -172,19 +172,10 @@ module gPEAC18_descrambler(
   input  wire Phase0,
   input  wire Phase1,
   input  wire [17:0] Scrambled_in, // 0 < data < modulus
-  output wire [17:0] Message_out, // C/D bit as Message_in[8], [17] should be 0
-  output wire Error
+  output wire [17:0] Message_out, // C/D bit as Message_in[8], [17] is error
 );
   wire phases;
   (* keep *) sg13g2_or2_1  OrPh(.X(phases), .A(Phase0), .B(Phase1));          //  phases = Phase0 or Phase1
-
-  // Sticky error flag : pull rst low to clear
-  wire error_transient, error_Modulus;
-  Compare_modulus cmp(.A(Scrambled_in), .En(Phase0), .X(error_Modulus));
-  (* keep *) sg13g2_or2_1  ErrCom(.X(error_transient), .A(error_Modulus), .B(Error));
-  (* keep *) sg13g2_dfrbpq_1 dffErr(.Q(Error), .D(error_transient), .RESET_B(rst), .CLK(clk));
-
-
 
   wire [17:0] A;
   wire [17:0] B;
@@ -194,18 +185,34 @@ module gPEAC18_descrambler(
   wire [17:0] OPT;
   wire [17:0] ResA;
   wire [17:0] ResB;
-  wire CinA, CinB, CoutA, CoutB, EnA, EnB, EnT;
+  wire CA, CB, CinA, CinB, CoutA, CoutB,
+       EnA, EnB;
 
-  mux2_x18 mxX(.sel(Phase), .if0(Scrambled_in), .if1(A), .res(OPM));
-  ConstModOrNeg cmon(.A(B), .C(Phase), .Y(OPB));
+  // Sticky error flag : pull rst low to clear
+  wire error_sum, error_Modulus;
+  Compare_modulus cmp(.A(Scrambled_in), .En(Phase0), .X(error_Modulus));
+  (* keep *) sg13g2_or2_1  ErrCombo(.X(error_sum), .A(error_Modulus), .B(Error));
+  (* keep *) sg13g2_dfrbpq_1 dffErr(.Q(Error), .D(error_sum), .RESET_B(rst), .CLK(clk));
+  (* keep *) sg13g2_or2_1  ErrOut(.X(Message_out[17]), .A(A[17]), .B(Error));
+  assign Message_out[16:0] = A[16:0];
+
+  // A path:
+  mux2_x18 mxA(.sel(Phase0), .if0(Scrambled_in), .if1(A), .res(OPM));       //ok
+  ConstModOrNeg cmon(.A(B), .C(Phase1), .Y(OPB));                           //ok
+  // CinA = Phase & ...
   Add18 AddA(.A(OPM), .B(OPB), .Cin(CinA), .S(ResA), .Cout(CoutA));
-  dffen_x18 RegA(.clk(clk), .rst(rst), .en(EnA), .D(ResA), .Q(A));  // EN à contrôler !
- 
-  Register_InitX RegT( .clk(clk), .rst(rst), .en(EnT), .D(Scrambled_in), .Q(T));  // EN à contrôler !
-  ConstAdjOrPass AdjY(.A(T), .C(Phase), .X(OPT));
-  Add18 AddB(.A(OPT), .B(B), .Cin(CinB), .S(ResB), .Cout(CoutB));
-  Register_InitX RegB(.clk(clk), .rst(rst), .en(EnB), .D(ResB), .Q(B));  // EN à contrôler !
+  // EnA = ....
+  dffen_x18 RegA(.clk(clk), .rst(1'b1), .en(EnA), .D(ResA), .Q(A));  // No RESET, init random value gets flushed
+  // newCA =
+  (* keep *) sg13g2_sdfrbpq_1 dffA(.Q(CA), .D(CA), .SCD(newCA), .SCE(phases), .RESET_B(rst), .CLK(clk));
 
-  assign Message_out = A;
-  
+  // B path:
+  Register_InitX RegT( .clk(clk), .rst(rst), .en(Phase0), .D(Scrambled_in), .Q(T));  //ok
+  ConstAdjOrPass AdjY(.A(T), .C(Phase1), .X(OPT));                                   //ok
+  //   CinB =
+  Add18 AddB(.A(OPT), .B(B), .Cin(CinB), .S(ResB), .Cout(CoutB));
+  // EnB = ....
+  Register_InitX RegB(.clk(clk), .rst(rst), .en(EnB), .D(ResB), .Q(B));
+  // newCB =
+  (* keep *) sg13g2_sdfrbpq_1 dffB(.Q(CB), .D(CB), .SCD(newCB), .SCE(phases), .RESET_B(rst), .CLK(clk));
 endmodule
