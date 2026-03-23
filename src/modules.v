@@ -330,5 +330,5 @@ module Decode_Hamming_early(
   wire [17:0] HammerDec_result, HammerDec_delayed;
   xor2_x18 mixDec(.A(HammIn), .B(HammerDec_delayed), .X(HammOut) );
   Hammer18x4 HamDec(.I(HammOut), .O(HammerDec_result));
-  dffen_x18 delayDec(.clk(clk), .rst(rst), .D(HammerDec_result), .Q(HammerDec_delayed), .en(DecResult_En));
+  dffen_x18 delayDec(.clk(clk), .rst(rst), .D(HammerDec_result), .Q(HammerDec_delayed), .en(HammEn));
 endmodule
