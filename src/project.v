@@ -84,8 +84,8 @@ module tt_um_miniMAC (
 
   mux2_x18 selDec( .sel(Decode), .if0(scrambled), .if1(FirstWord), .res(scrambled_in) );
   (* keep *) sg13g2_mux2_2 sel_src(.S(Decode), .A0(Din_OK), .A1(emPEAC_phase2), .X(dePEAC_phase0));
-  (* keep *) sg13g2_dfrbpq_1 dff_enc1(.Q(emPEAC_phase1), .D(Din_OK      ), .RESET_B(INT_RESET), .CLK(clk));
-  (* keep *) sg13g2_dfrbpq_1 dff_enc2(.Q(emPEAC_phase2), .D(gPEAC_phase1), .RESET_B(INT_RESET), .CLK(clk));
+  (* keep *) sg13g2_dfrbpq_1 dff_dec1(.Q(emPEAC_phase1), .D(Din_OK      ), .RESET_B(INT_RESET), .CLK(clk));
+  (* keep *) sg13g2_dfrbpq_1 dff_dec2(.Q(emPEAC_phase2), .D(gPEAC_phase1), .RESET_B(INT_RESET), .CLK(clk));
 
 
 assign descrambled = scrambled; //////////////////////////////////////////////////////////////////////////////////
