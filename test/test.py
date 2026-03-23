@@ -1,8 +1,11 @@
 # SPDX-FileCopyrightText: © 2024 Tiny Tapeout
 # SPDX-License-Identifier: Apache-2.0
 
-# Test the Hammer18 scrambler in direct, encoding and decoding modes.
+# Test the Hammer18 & gPEAC scrambler & descrambler in direct, encoding and decoding modes.
 
+Scrambling_direct = True
+
+# now unused:
 enable_bypass = False
 enable_encode = False
 enable_decode = False
@@ -104,7 +107,7 @@ vectors = [
 ["100011000001110011", "101100010000011011"],
 ["001110001011100000", "101111110000110100"]]
 
-sequence = [
+sequence = [ # for the Hammer18 tests
  10,      # index=10
  3147,
  228245,
@@ -115,6 +118,60 @@ sequence = [
  96676,
  134782,
  134777 ]  # index=19
+
+// "Golden" values output by VHDL when encoding 0
+Scrambler_vectors=[
+"011011010101101101",
+"011001000100101100",
+"110101101001100100",
+"000011100101110110",
+"111000000111010000",
+"100010111111100110",
+"000011001010111110",
+"100101010100100001",
+"100111001110001111",
+"100110110101010000",
+"001010001111101110",
+"001110101110110001",
+"001001011000111110",
+"000010100001000001",
+"000010000010010101",
+"001010100001011100",
+"001000010110000000",
+"011100001011001110",
+"101011010011111100",
+"111011010101010011",
+"011010110000000100",
+"101111100011111011",
+"110010010100001101",
+"100101000111100001",
+"110110011000011011",
+"000100111001111111",
+"111101100011111111",
+"111100101001000011",
+"110101001010111110",
+"000101101000110010",
+"100011000110110110",
+"010100000010000101",
+"101011001110011111",
+"100111001111110000",
+"111100101010100101",
+"101101101101110001",
+"001110101100111101",
+"011111011011001010",
+"001101110111010111",
+"010001011110100010",
+"011110100110010100",
+"001011001000110001",
+"111110010101000111",
+"001010111011010100",
+"111101101010010111",
+"001110110111010111",
+"001100011011111010",
+"011000011000011001",
+"110111110001111001",
+"100010110000101111"]
+
 
 @cocotb.test()
 async def test_project(dut):
@@ -130,6 +187,9 @@ async def test_project(dut):
   dut.ui_in.value = 0
   dut.uio_in.value = 0
 
+  ######################################################################
+  # The following code was used to test the standalone Hammer circuit
+  
   # Test Hammer in direct mode (mode=0)
   if enable_bypass == True:
     await reset_state(dut)  
@@ -191,6 +251,22 @@ async def test_project(dut):
       # the Zero flag should be 1 when i >= 258144
       # but there is a delay so it's checked in the VCD
       # ænyway it's only a temporary test that will not work later
+    await ClockCycles(dut.clk, 6)
+
+
+  ######################################################################
+  # The following code is used to test the whole Hammer+gPEAC circuit
+
+  if Scrambling_direct == True:
+    await reset_state(dut)  
+    dut._log.info("Scrambling Mode")
+    for x in Scrambler_vectors:
+      v = int(x,2)
+      #print("testing " + x[0] + " => " + x[1]);
+      await input_parameter(0, Encode, dut)  # Encode mode
+      o = await output_parameter(dut)
+      print("expected "+ bin(v + (1 << 20))) +" - found " + bin(o + (1 << 20)))
+      #assert v == o
     await ClockCycles(dut.clk, 6)
 
   
