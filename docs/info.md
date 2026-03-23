@@ -47,10 +47,9 @@ First let's examine the pinout. The inputs:
 - CLK is the main clock, driving the whole circuit.
 - Reset synchronously restores the registers' initial values.
 - Enc and Dec select the pipeline routing mode:
-  - Enc=0, Dec=0 : bypass mode => the output is copied to the output after 3 cycles,
+  - Enc=0, Dec=0 : loopback mode => encodes then decodes, the delayed output (8 cycles) must be identical to the input.,
   - Enc=0, Dec=1 : decode mode => the cleartext input is scrambled and output after 5 cycles,
-  - Enc=1, Dec=0 : encode mode => the scrambled input is restored to cleartext after 5 cycles,
-  - Enc=1, Dec=1 : loopback mode => encodes then decodes, the delayed output (8 cycles) must be identical to the input.
+  - Enc=1 : encode mode => the scrambled input is restored to cleartext after 5 cycles.
 - DI0 to DI8 are 9-bit data half-words that are sampled at the rising edge of CLK.
 - DEN is Data ENable input, signalling the presence of the first 9-bit half-word of the pair on DI0:8. The second half MUST follow immediately, during the next cycle of CLK.
 
