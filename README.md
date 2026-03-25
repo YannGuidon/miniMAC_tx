@@ -20,7 +20,7 @@ This unit combines two bleeding-edge circuits:
 
 - the gPEAC18 unit is an additive-based scrambler that combines the 17 bits and creates an extra check bit. It uses 2 cycles too (to reuse the adders) so it matches the interface's throughput.
 
-- the Hammer18 unit is a bijective XOR-based scrambler that boosts the Hamming distance on the 18 bits at low Bit Error Rates.
+- the Hammer18 unit is a bijective XOR-based scrambler that boosts the Hamming distance on the 18 bits at low Bit Error Rates. It was first published in March of 2026 as [https://connect.ed-diamond.com/gnu-linux-magazine/glmf-277/erreurs-en-rafales-multiparites-et-codes-gray-entrelaces](https://connect.ed-diamond.com/gnu-linux-magazine/glmf-277/erreurs-en-rafales-multiparites-et-codes-gray-entrelaces)
 
 Together they provide a very strong and early error detection, tailored for early retransmition, saving costs, latency and bandwidth. Higher levels of the protocol will detect anomalous conditions and reset the link's state.
 
