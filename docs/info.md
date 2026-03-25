@@ -1,4 +1,4 @@
-Note: despite the messy tapeout on iHP26a in March 2026, it's still under development.
+Note: development continues despite the messy tapeout on iHP26a.
 
 ## What is this miniMAC
 
