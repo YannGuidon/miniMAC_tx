@@ -1,3 +1,5 @@
+For a working version (that supports both sg13 and 5l), check [https://github.com/ygdes/miniMAC_IHP](https://github.com/ygdes/miniMAC_IHP)
+
 !!! Warning !!! This project made it to the [iHP26a tapeout](https://app.tinytapeout.com/projects/3758) despite the March version not working as intended !!!
 
 Unexpected dual-use coping strategy: I'll have to check if/how it could still work as noise whitener 😊
